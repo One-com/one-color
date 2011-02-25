@@ -20,6 +20,7 @@ one.color.(RGB|HSL|HSV|CMYK) objects are designed to be immutable; all the conve
 one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set and adjust methods from all other installed colorspaces, so although you can use the explicit conversion methods one.color.RGB.toHSL(), one.color.RGB.toCMYK():
 
 Example::
+
 	new one.color.RGB(.4, .3, .9).
 	    adjustLightness(+.2). // Implicit conversion to HSL
 	    setRed(-.1). // Implicit conversion back to RGB
