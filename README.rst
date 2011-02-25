@@ -2,6 +2,8 @@ one.color
 =========
 one.color is a javascript color calculation toolkit.
 Works in Node.js and in the browser.
+The color object automatically installs implicit conversions to different color spaces when needed, and adds get/set/adjust methods of any color channel in any available color space.
+All impicit conversions are done using floating point, so no precision is lost by rounding errors when converting between color spaces.
 
 Features
 ========
@@ -11,15 +13,6 @@ Features
 * Chainable color manipulation
 * Seamless conversion between color spaces on demand
 * Outputs as Hex, RBG or HSV in css syntax with or without alpha channel
-
-Building
-========
-The makefile uses `AssetGraph <https://github.com/One-com/assetgraph>`_ for resolving the javascript dependencies.
-If you aren't up for a complete installation, take a look at the pre-build packages in the 'build' directory.
-
-Documentation
-=============
-The API is documented in the source code and can be built using `JSDoc <http://jsdoc.sourceforge.net/>`_.
 
 Usage Example
 =============
@@ -31,6 +24,15 @@ Example::
 	    adjustLightness(+.2). // Implicit conversion to HSL
 	    setRed(-.1). // Implicit conversion back to RGB
 	    toHex(); // "#00a6f2"
+
+Documentation
+=============
+The API is documented in the source code and can be built using `JSDoc <http://jsdoc.sourceforge.net/>`_.
+
+Building
+========
+The makefile uses `AssetGraph <https://github.com/One-com/assetgraph>`_ for resolving the javascript dependencies.
+If you aren't up for a complete installation, take a look at the pre-build packages in the 'build' directory.
 
 License
 ========
