@@ -12,15 +12,6 @@ one.include = one.exclude = function () {}; // Ignore these in development mode
 
 /**
  * @namespace one.color
- * <p>You can include <tt>one/color-registerValueType.js</tt> to be
- * able to use the 'color' type directly in your Ext.data.Record
- * definitions:</p>
- * <code><pre>
-var MyModelObject = Ext.data.Record.create([
-    {name: 'property_name', type: 'color'}
-]);
- * </pre></code>
- * </p>
  */
 one.color = one.color || {};
 
