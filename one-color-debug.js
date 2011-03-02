@@ -372,8 +372,33 @@ one.color.fromHex = function (strHex) {
             parseInt(hexMatch[2], 16) / 255,
             parseInt(hexMatch[3], 16) / 255
         );
-    } else {
-        return false;
+    }
+};
+
+/**
+ * Regex for matching CSS RGBA color strings
+ * @private
+ */
+one.color.rgbaRegex =/^rgba?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i; 
+
+/**
+ * Parse a CSS RGBA string. Please use {@link one.color#parse} instead.
+ * @param strCSS The CSS RGBA string, e.g. <tt>"rgb(100, 255, 100)"</tt>,
+ * <tt>"rgba(0, 0, 255, 0.5)"<tt>, <tt>"rgb(0%, 100%, 0%)"</tt>....
+ * @return {one.color.RGB} Color object representing the parsed
+ * color, or false if the string couldn't be parsed.
+ * @private
+ */
+one.color.fromCSSRGBA = function (strCSS) {
+    var match = strCSS.match(one.color.rgbaRegex);
+
+    if (match) {
+        return new one.color.RGB(
+            parseFloat(match[0]) / (match[1] ? 100 : 255),
+            parseFloat(match[2]) / (match[3] ? 100 : 255),
+            parseFloat(match[4]) / (match[5] ? 100 : 255),
+            parseFloat(match[6])
+        );
     }
 };
 
@@ -395,7 +420,7 @@ color = color.parse(color);
  */
 one.color.parse = function (obj) {
     if (obj.charCodeAt) {
-        return one.color.fromHex(obj);
+        return one.color.fromCSSRGBA(obj) || one.color.fromHex(obj);
     } else if (typeof obj === 'object' && obj.isColor) {
         return obj;
     } else if (Object.prototype.toString.apply(obj) === '[object Array]') {
