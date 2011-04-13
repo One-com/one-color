@@ -28,7 +28,7 @@ Example::
 
 Documentation
 =============
-The API is documented in the source code and can be built using `JSDoc <http://jsdoc.sourceforge.net/>`_.
+The API is documented in the source code and can be built using `JSDoc <http://code.google.com/p/jsdoc-toolkit/>`_.
 
 Building
 ========
