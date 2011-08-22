@@ -33,7 +33,11 @@ The API is documented in the source code and can be built using `JSDoc <http://c
 Building
 ========
 The Makefile uses `AssetGraph <https://github.com/One-com/assetgraph>`_ for resolving the JavaScript dependencies.
-If you aren't up for a complete installation, take a look at the pre-built packages in the 'build' directory.
+
+If you aren't up for a complete installation, take a look at the pre-built packages:
+
+* `one-color.js <one-color.js>`_
+* `one-color-debug.js <one-color-debug.js>`_
 
 License
 ========
