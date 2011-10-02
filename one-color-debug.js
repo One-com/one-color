@@ -4,7 +4,11 @@
  * @namespace one One.com global JavaScript namespace.
  * @exports window.one as one
  */
-window.one = window.one || {};
+if (typeof window !== 'undefined') {
+	window.one = window.one || {};
+} else {
+	var one = {};
+}
 
 one.include = one.exclude = function () {}; // Ignore these in development mode
 
@@ -124,10 +128,10 @@ one.color.installColorSpace = function (colorSpaceName, propertyDefinitions, con
     propertyNames.forEach(function (propertyName, i) {
         var longPropertyName = longPropertyNames[i];
         prototype['get' + longPropertyName] = new Function("return this." + propertyName + ";");
-        prototype['set' + longPropertyName] = new Function("newValue", "return new one.color." + colorSpaceName + "(" + propertyNames.map(function (otherPropertyName, i) {
+        prototype['set' + longPropertyName] = new Function("newValue", "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
             return propertyName === otherPropertyName ? "newValue" : "this." + otherPropertyName;
         }).join(", ") + ");");
-        prototype['adjust' + longPropertyName] = new Function("delta", "return new one.color." + colorSpaceName + "(" + propertyNames.map(function (otherPropertyName, i) {
+        prototype['adjust' + longPropertyName] = new Function("delta", "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
             return "this." + otherPropertyName + (propertyName === otherPropertyName ? "+delta" : "");
         }).join(", ") + ");");
     });
@@ -1125,4 +1129,9 @@ one.color.installColorSpace('CMYK', ['Cyan', 'Magenta', 'Yellow', 'blacK', 'Alph
     }
 });
 
+// This file is purely for the build system
+
+if (module) {
+	module.exports = one.color;
+}
 
