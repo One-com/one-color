@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>one-color demo</title>
+
+        <link rel="stylesheet" type="text/css" href="demo.css">
+
+        <script type="text/javascript" src="../one-color.js"></script>
+        <script type="text/javascript" src="demo.js"></script>
+    </head>
+    <body>
+        <div id="site">
+            <h1>One-color.js</h1>
+            <h2>A color object with implicit color space conversion and methods for setting, getting and adjusting any dimension in RGB, HSV, HSL and CMYK including alpha</h2>
+
+            <a id="demo" href="#">Click me for demo!</a>
+
+            <p>We made this color object because we were tired of color conversion functions that required you to serialize to strings all the time. When you want to to a lot of color manipulation in different color spaces, you shouldn't need to serialize to a string representation at intermediary steps.</p>
+            <p>So this is when we came up with the idea og making Color an object that has manipulation methods for all dimensions in all installed color spaces, with implicit conversion to the color space that you are manipulating.</p>
+            <p>This means that you can chain any manipulation of any dimension without ever having to think about serialization. When you are done you just run one of the serialization methods depending on the output you want.</p>
+
+            <h3>Example</h3>
+            <pre>new one.color.RGB(.4, .3, .9).
+    adjustLightness(+.2). // Implicit conversion to HSL
+    setRed(-.1). // Implicit conversion back to RGB
+    toHex(); // "#00a6f2"</pre>
+
+            <p>The code is fully documented, and you can use JSdoc to build the documentation.</p>
+            <a>Link to documenation (TODO)</a>
+            <p>This color object runs in your browser and in NodeJS.</p>
+
+            <a href="https://github.com/One-com/one-color"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub"></a>
+        </div>
+
+    </body>
+</html>

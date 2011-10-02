@@ -1,0 +1,49 @@
+body {
+    background: #2D1B06;
+}
+
+* {
+    font-family: Palatino Linotype, Book Antiqua, Palatino, serif;
+}
+
+h1 {
+    color: #FFD49E;
+}
+
+h2 {
+    color: #BE9765;
+}
+
+h3 {
+    color: #BE9765;
+}
+
+h1 {
+    font-size: 300%;
+}
+
+#site {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    background: #623B0D;
+    padding: 20px 40px 100px;
+}
+
+a {
+    padding: 5px 10px;
+    background: #258826;
+    color: white;
+    font-weight: bold;
+}
+
+p {
+    color: #FFECD4;
+}
+
+pre {
+    padding: 20px;
+    background: #482B09;
+    border: 1px solid #AC7D46;
+    color: #FFECD4;
+}
