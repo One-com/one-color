@@ -12,13 +12,13 @@
     <body>
         <div id="site">
             <h1>One-color.js</h1>
-            <h2>A color object with implicit color space conversion and methods for setting, getting and adjusting any dimension in RGB, HSV, HSL and CMYK including alpha</h2>
+            <h2>A color object with implicit color space conversion and methods for setting, getting and adjusting any channel in RGB, HSV, HSL and CMYK including alpha</h2>
 
             <a id="demo" href="#">Click me for demo!</a>
 
             <p>We made this color object because we were tired of color conversion functions that required you to serialize to strings all the time. When you want to to a lot of color manipulation in different color spaces, you shouldn't need to serialize to a string representation at intermediary steps.</p>
-            <p>So this is when we came up with the idea og making Color an object that has manipulation methods for all dimensions in all installed color spaces, with implicit conversion to the color space that you are manipulating.</p>
-            <p>This means that you can chain any manipulation of any dimension without ever having to think about serialization. When you are done you just run one of the serialization methods depending on the output you want.</p>
+            <p>So this is when we came up with the idea og making Color an object that has manipulation methods for all channels in all installed color spaces, with implicit conversion to the color space that you are manipulating.</p>
+            <p>This means that you can chain any manipulation of any channel without ever having to think about serialization. When you are done you just run one of the serialization methods depending on the output you want.</p>
 
             <h3>Example</h3>
             <pre>new one.color.RGB(.4, .3, .9).
