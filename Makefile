@@ -7,14 +7,11 @@ ifneq ($(NPM_BINS),)
 endif
 
 jsfiles := $(shell find lib/ -type f -name "*.js")
-outputfiles := one-color-debug.js one-color.js one-color-node.js
+outputfiles := one-color-debug.js one-color.js
 
 .PHONY : all clean
 
 all: $(outputfiles)
-
-one-color-node.js: $(jsfiles)
-	flattenOneInclude lib/one/color/_node.js --label js=lib > $@
 
 one-color-debug.js: $(jsfiles)
 	flattenOneInclude lib/one/color/_all.js --label js=lib > $@
