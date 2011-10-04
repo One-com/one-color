@@ -22,6 +22,10 @@ h1 {
     font-size: 300%;
 }
 
+hr {
+	border: 1px inset #AC7D46;
+}
+
 #site {
     position: relative;
     max-width: 700px;
@@ -46,4 +50,9 @@ pre {
     background: #482B09;
     border: 1px solid #AC7D46;
     color: #FFECD4;
+}
+
+#disqus_thread a {
+	padding: 0;
+	background-color: transparent;
 }
