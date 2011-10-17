@@ -1,0 +1,3 @@
+[submodule "slides/3rdparty/CSSS"]
+	path = slides/3rdparty/CSSS
+	url = https://github.com/LeaVerou/CSSS.git
