@@ -1,0 +1,50 @@
+# vim: syntax=python
+# vim: filetype=python
+
+import SCons
+
+env = Environment()
+from glob import glob
+
+env['BUILDERS']['inkscape_pdf'] = Builder(
+        action = 'inkscape --export-area-drawing $SOURCE -A $TARGET',
+        suffix = '.pdf', src_suffix = '.svg')
+env['BUILDERS']['pdfcrop'] = Builder(
+        action = 'pdfcrop --margins 0 $SOURCE $TARGET',
+        suffix = '.pdf', src_suffix = '.pdf')
+env['BUILDERS']['epstopdf'] = Builder(
+		action = 'epstopdf $SOURCE -o=$TARGET',
+		suffix = '.pdf', src_suffix = '.eps')
+
+# Graph generation
+env['BUILDERS']['generate_ab_stats'] = Builder(
+        action = 'summarize-ab-stats.py $SOURCE > $TARGET',
+        suffix = '.ab-data')
+
+# Generate logo
+logo_white = env.epstopdf("one-com-logo/logo_venstre_m_tekst_hvid.eps")
+logo_black = env.epstopdf("one-com-logo/logo_venstre_m_tekst_sort.eps")
+
+# And then the beamer theme for One.com
+one_theme_file = "beamerthemeOnecom.sty"
+Depends(one_theme_file, logo_white)
+Depends(one_theme_file, logo_black)
+
+# Finally, the slides themselves
+onecolor = env.PDF(
+        target = "onecolor.pdf",
+        source = "onecolor.tex"
+        )
+Depends(onecolor, one_theme_file)
+
+Alias('all', [
+    onecolor
+    ])
+
+for src in glob('fig/*.svg'):
+    def suf(new_suf):
+        return src.replace('.svg', new_suf)
+
+    # Generate inkscape PDF
+    env.inkscape_pdf(suf('.pdf'), src)
+
