@@ -381,6 +381,7 @@ one.color.fromHex = function (strHex) {
 
 /**
  * Regex for matching CSS RGBA color strings
+ * @name one.color.rgbaRegex
  * @private
  */
 one.color.rgbaRegex =/^rgba?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i;
