@@ -383,7 +383,7 @@ one.color.fromHex = function (strHex) {
  * Regex for matching CSS RGBA color strings
  * @private
  */
-one.color.rgbaRegex =/^rgba?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i; 
+one.color.rgbaRegex =/^rgba?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i;
 
 /**
  * Parse a CSS RGBA string. Please use {@link one.color#parse} instead.
@@ -398,10 +398,10 @@ one.color.fromCSSRGBA = function (strCSS) {
 
     if (match) {
         return new one.color.RGB(
-            parseFloat(match[0]) / (match[1] ? 100 : 255),
-            parseFloat(match[2]) / (match[3] ? 100 : 255),
-            parseFloat(match[4]) / (match[5] ? 100 : 255),
-            parseFloat(match[6])
+            parseFloat(match[1]) / (match[2] ? 100 : 255),
+            parseFloat(match[3]) / (match[4] ? 100 : 255),
+            parseFloat(match[5]) / (match[6] ? 100 : 255),
+            parseFloat(match[7])
         );
     }
 };
