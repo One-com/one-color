@@ -11,7 +11,7 @@ outputfiles := one-color-debug.js one-color.js
 
 .PHONY : all clean
 
-all: $(outputfiles)
+all: $(outputfiles) doc
 
 one-color-debug.js: $(jsfiles)
 	flattenOneInclude lib/one/color/_all.js --label js=lib > $@
@@ -19,5 +19,10 @@ one-color-debug.js: $(jsfiles)
 one-color.js: one-color-debug.js
 	yui-compressor --type js $< > $@
 
+doc: $(jsfiles)
+	mkdir -p doc
+	jsdoc.sh --directory=doc/api -a -p lib
+
 clean:
 	rm -f $(outputfiles)
+	rm -rf doc
