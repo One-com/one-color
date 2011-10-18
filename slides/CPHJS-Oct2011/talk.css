@@ -1,0 +1,40 @@
+html {
+	background-image: url(images/Space_Rainbow_desktop_background_pictures.jpg);
+	background-size: cover;
+}
+
+#intro h1 {
+/*
+	width: 60%;
+	min-height: 500px;
+	margin: 5% auto 0;
+	*/
+	font-size: 2in;
+	text-align: center;
+}
+
+#intro h2 {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+#intro object {
+    display: block;
+    margin: -100px auto;
+}
+
+#intro .attribution {
+	font-family: Helvetica, sans-serif;
+	font-weight: bold;
+	text-align: center;
+	font-size: 100%;
+	color: rgba(255,255,255,.7);
+	background: rgba(0,0,0,0.4);
+	padding:.4em 0;
+}
+
+.slide img {
+    display: block;
+    margin: 0 auto;
+}
