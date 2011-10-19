@@ -42,42 +42,35 @@ one.color = one.color || {};
 
 one.color.installedColorSpaces = [];
 
-one.color.installColorSpace = function (colorSpaceName, propertyDefinitions, config) {
-    var propertyNames = propertyDefinitions.map(function (propertyDefinition) {
-            return propertyDefinition.match(/[A-Z]/)[0].toLowerCase();
-        }),
-        longPropertyNames = propertyDefinitions.map(function (propertyDefinition) {
-            return propertyDefinition.toLowerCase().capitalize();
-        }),
-        Constructor = one.color[colorSpaceName] = new Function(propertyNames.join(","),
-            // Allow passing an array to the constructor:
-            "if (Object.prototype.toString.apply(" + propertyNames[0] + ") === '[object Array]') {" +
-                propertyNames.map(function (propertyName, i) {
-                    return propertyName + "=" + propertyNames[0] + "[" + i + "];";
-                }).reverse().join("") +
-            "}" +
-            "if (" + propertyNames.filter(function (propertyName) {
-                return propertyName !== 'a';
-            }).map(function (propertyName) {
-                return "isNaN(" + propertyName + ")";
-            }).join("||") + "){" + "throw \"[one.color." + colorSpaceName + "]: Invalid color: (\"+" + propertyNames.join("+\",\"+") + "+\")\";}" +
-            propertyNames.map(function (propertyName) {
-                if (propertyName === 'h') {
-                    return "this.h=h<0?h-Math.floor(h):h%1"; // Wrap
-                } else if (propertyName === 'a') {
-                    return "this.a=(isNaN(a)||a>1)?1:(a<0?0:a);";
-                } else {
-                    return "this." + propertyName + "=" + propertyName + "<0?0:(" + propertyName + ">1?1:" + propertyName + ")";
-                }
-            }).join(";") + ";"
-        ),
-        prototype = Constructor.prototype;
+one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
+    one.color[colorSpaceName] = new Function(propertyNames.join(","),
+        // Allow passing an array to the constructor:
+        "if (Object.prototype.toString.apply(" + propertyNames[0] + ") === '[object Array]') {" +
+            propertyNames.map(function (propertyName, i) {
+                return propertyName + "=" + propertyNames[0] + "[" + i + "];";
+            }).reverse().join("") +
+        "}" +
+        "if (" + propertyNames.filter(function (propertyName) {
+            return propertyName !== 'alpha';
+        }).map(function (propertyName) {
+            return "isNaN(" + propertyName + ")";
+        }).join("||") + "){" + "throw new Error(\"[one.color." + colorSpaceName + "]: Invalid color: (\"+" + propertyNames.join("+\",\"+") + "+\")\");}" +
+        propertyNames.map(function (propertyName) {
+            if (propertyName === 'hue') {
+                return "this._hue=hue<0?hue-Math.floor(hue):hue%1"; // Wrap
+            } else if (propertyName === 'a') {
+                return "this._alpha=(isNaN(alpha)||alpha>1)?1:(alpha<0?0:alpha);";
+            } else {
+                return "this._" + propertyName + "=" + propertyName + "<0?0:(" + propertyName + ">1?1:" + propertyName + ")";
+            }
+        }).join(";") + ";"
+    );
+    one.color[colorSpaceName].propertyNames = propertyNames;
 
-    Constructor.propertyNames = propertyNames;
-    Constructor.longPropertyNames = longPropertyNames;
+    var prototype = one.color[colorSpaceName].prototype;
 
-    ['valueOf', 'toHex', 'toCSS', 'toCSSWithAlpha'].forEach(function (methodName) {
-        prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.toHex : new Function("return this.toRGB()." + methodName + "();"));
+    ['valueOf', 'hex', 'css', 'cssa'].forEach(function (methodName) {
+        prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new Function("return this.rgb()." + methodName + "();"));
     });
 
     prototype.isColor = true;
@@ -87,10 +80,10 @@ one.color.installColorSpace = function (colorSpaceName, propertyDefinitions, con
             epsilon = 1e-10;
         }
 
-        otherColor = otherColor['to' + colorSpaceName]();
+        otherColor = otherColor[colorSpaceName.toLowerCase()]();
 
         for (var i = 0; i < propertyNames.length; i = i + 1) {
-            if (Math.abs(this[propertyNames[i]] - otherColor[propertyNames[i]]) > epsilon) {
+            if (Math.abs(this['_' + propertyNames[i]] - otherColor[propertyNames[i]]) > epsilon) {
                 return false;
             }
         }
@@ -101,49 +94,54 @@ one.color.installColorSpace = function (colorSpaceName, propertyDefinitions, con
     prototype.toJSON = new Function(
         "return ['" + colorSpaceName + "', " +
             propertyNames.map(function (propertyName) {
-                return "this." + propertyName;
+                return "this._" + propertyName;
             }, this).join(", ") +
         "];"
     );
 
-    if (config.fromRGB) {
-        one.color.RGB.prototype['to' + colorSpaceName] = config.fromRGB;
-        delete config.fromRGB;
-    }
-    for (var prop in config) {
-        if (config.hasOwnProperty(prop)) {
-            prototype[prop] = config[prop];
+    for (var propertyName in config) {
+        if (config.hasOwnProperty(propertyName)) {
+            var matchFromColorSpace = propertyName.match(/^from(.*)$/);
+            if (matchFromColorSpace) {
+                one.color[matchFromColorSpace[1].toUpperCase()].prototype[colorSpaceName.toLowerCase()] = config[propertyName];
+            } else {
+                prototype[propertyName] = config[propertyName];
+            }
         }
     }
 
     // It is pretty easy to implement the conversion to the same color space:
-    prototype['to' + colorSpaceName] = function () {
+    prototype[colorSpaceName.toLowerCase()] = function () {
         return this;
     };
     prototype.toString = new Function("return \"[one.color." + colorSpaceName + ":\"+" + propertyNames.map(function (propertyName, i) {
-        return "\" " + longPropertyNames[i] + "=\"+this." + propertyName;
+        return "\" " + propertyNames[i] + "=\"+this._" + propertyName;
     }).join("+") + "+\"]\";");
 
     // Generate getters and setters
     propertyNames.forEach(function (propertyName, i) {
-        var longPropertyName = longPropertyNames[i];
-        prototype['get' + longPropertyName] = new Function("return this." + propertyName + ";");
-        prototype['set' + longPropertyName] = new Function("newValue", "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
-            return propertyName === otherPropertyName ? "newValue" : "this." + otherPropertyName;
-        }).join(", ") + ");");
-        prototype['adjust' + longPropertyName] = new Function("delta", "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
-            return "this." + otherPropertyName + (propertyName === otherPropertyName ? "+delta" : "");
-        }).join(", ") + ");");
+        prototype[propertyName] = new Function("value", "isDelta",
+            // Simple getter mode: color.red()
+            "if (typeof value === 'undefined') {" +
+                "return this._" + propertyName + ";" +
+            "}" +
+            // Adjuster: color.red(+.2, true)
+            "if (isDelta) {" +
+                "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
+                    return "this._" + otherPropertyName + (propertyName === otherPropertyName ? "+value" : "");
+                }).join(", ") + ");" +
+            "}" +
+            // Setter: color.red(.2);
+            "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
+                return propertyName === otherPropertyName ? "value" : "this._" + otherPropertyName;
+            }).join(", ") + ");");
     });
 
     function installForeignMethods(targetColorSpaceName, sourceColorSpaceName) {
         var obj = {};
-        obj['to' + sourceColorSpaceName] = new Function("return this.toRGB().to" + sourceColorSpaceName + "();"); // Fallback
-        one.color[sourceColorSpaceName].propertyNames.forEach(function (property, i) {
-            var longPropertyName = one.color[sourceColorSpaceName].longPropertyNames[i];
-            obj['get' + longPropertyName] = new Function("return this.to" + sourceColorSpaceName + "().get" + longPropertyName + "();");
-            obj['set' + longPropertyName] = new Function("newValue", "return this.to" + sourceColorSpaceName + "().set" + longPropertyName + "(newValue);");
-            obj['adjust' + longPropertyName] = new Function("delta", "return this.to" + sourceColorSpaceName + "().adjust" + longPropertyName + "(delta);");
+        obj[sourceColorSpaceName.toLowerCase()] = new Function("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
+        one.color[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
+            obj[propertyName] = new Function ("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
         });
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && one.color[targetColorSpaceName].prototype[prop] === undefined) {
@@ -173,32 +171,32 @@ one.color.installColorSpace = function (colorSpaceName, propertyDefinitions, con
  * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
  * and adjust methods from all other installed colorspaces, so
  * although you can use the explicit conversion methods ({@link
- * one.color.RGB#toHSL}, {@link one.color.RGB#toCMYK}...), the below
+ * one.color.RGB#hsl}, {@link one.color.RGB#cmyk}...), the below
  * will work just fine:</p><pre><code>
 
 new one.color.RGB(.4, .3, .9).
-    adjustLightness(+.2). // Implicit conversion to HSL
-    setRed(-.1). // Implicit conversion back to RGB
-    toHex(); // "#00a6f2"
+    lightness(+.2, true). // Implicit conversion to HSL
+    red(-.1). // Implicit conversion back to RGB
+    hex(); // "#00a6f2"
 </code></pre>
  *
  * @constructor
  * Create a new one.color.RGB object. Values outside the supported
  * range, [0..1], will be adjusted automatically.
- * @param {Number} r The red component, range: [0..1]
- * @param {Number} g The green component, range: [0..1]
- * @param {Number} b The blue component, range: [0..1]
- * @param {Number} [a] The alpha value, range: [0..1],
+ * @param {Number} red The red component, range: [0..1]
+ * @param {Number} green The green component, range: [0..1]
+ * @param {Number} blue The blue component, range: [0..1]
+ * @param {Number} [alpha] The alpha value, range: [0..1],
  * defaults to 1
  */
 
-one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
+one.color.installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
     /**
      * Get the standard RGB hex representation of the color.
      * @return {String} The hex string, e.g. "#f681df"
      */
-    toHex: function () {
-        var hexString = (Math.round(255 * this.r) * 0x10000 + Math.round(255 * this.g) * 0x100 + Math.round(255 * this.b)).toString(16);
+    hex: function () {
+        var hexString = (Math.round(255 * this._red) * 0x10000 + Math.round(255 * this._green) * 0x100 + Math.round(255 * this._blue)).toString(16);
         return '#' + ('00000'.substr(0, 6 - hexString.length)) + hexString;
     },
 
@@ -207,8 +205,8 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
      * alpha value.
      * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
      */
-    toCSS: function () {
-        return "rgb(" + Math.round(255 * this.r) + "," + Math.round(255 * this.g) + "," + Math.round(255 * this.b) + ")";
+    css: function () {
+        return "rgb(" + Math.round(255 * this._red) + "," + Math.round(255 * this._green) + "," + Math.round(255 * this._blue) + ")";
     },
 
     /**
@@ -216,101 +214,54 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
      * the alpha value.
      * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
      */
-    toCSSWithAlpha: function () {
-        return "rgba(" + Math.round(255 * this.r) + "," + Math.round(255 * this.g) + "," + Math.round(255 * this.b) + "," + this.a + ")";
+    cssa: function () {
+        return "rgba(" + Math.round(255 * this._red) + "," + Math.round(255 * this._green) + "," + Math.round(255 * this._blue) + "," + this._alpha + ")";
     }
 });
 
 /**
- * @name one.color.RGB.prototype.r
- * @property
- * @type Number
- * @description The red component, range: [0..1]
- */
-
-/**
- * @name one.color.RGB.prototype.g
- * @property
- * @type Number
- * @description The green component, range: [0..1]
- */
-
-/**
- * @name one.color.RGB.prototype.b
- * @property
- * @type Number
- * @description The blue component, range: [0..1]
- */
-
-/**
- * @name one.color.RGB.prototype.a
- * @property
- * @type Number
- * @description The alpha value, range: [0..1]
- */
-
-/**
- * @name one.color.RGB.prototype.setRed
+ * @name one.color.RGB.prototype.red
  * @function
- * @param {Number} r The new red component, range: [0..1]
- * @return {one.color.RGB} New color object with the changed value.
+ * @param {Number} red The new red component, range: [0..1]. If not
+ * provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.RGB} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.RGB.prototype.setGreen
+ * @name one.color.RGB.prototype.green
  * @function
- * @param {Number} g The new green component, range: [0..1]
- * @return {one.color.RGB} New color object with the changed value.
+ * @param {Number} green The new green component, range: [0..1]
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.RGB} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.RGB.prototype.setBlue
+ * @name one.color.RGB.prototype.blue
  * @function
- * @param {Number} b The new blue component, range: [0..1]
- * @return {one.color.RGB} New color object with the changed value.
+ * @param {Number} blue The new blue component, range: [0..1]
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.RGB} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.RGB.prototype.setAlpha
+ * @name one.color.RGB.prototype.alpha
  * @function
- * @param {Number} a The new alpha value, range: [0..1]
- * @return {one.color.RGB} New color object with the changed value.
- */
-
-/**
- * @name one.color.RGB.prototype.adjustRed
- * @function
- * @param {Number} r The value to add to the red component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.RGB} New color object with the changed value.
- */
-
-/**
- * @name one.color.RGB.prototype.adjustGreen
- * @function
- * @param {Number} g The value to add to the green component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.RGB} New color object with the changed value.
- */
-
-/**
- * @name one.color.RGB.prototype.adjustBlue
- * @function
- * @param {Number} b The value to add to the blue component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.RGB} New color object with the changed value.
- */
-
-/**
- * @name one.color.RGB.prototype.adjustAlpha
- * @function
- * @param {Number} a The value to add to the alpha value. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.RGB} New color object with the changed value.
+ * @param {Number} alpha The new alpha value, range: [0..1]
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.RGB} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
@@ -321,7 +272,7 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
  */
 
 /**
- * @name one.color.RGB.prototype.toRGB
+ * @name one.color.RGB.prototype.rgb
  * @description Convert the color to a {@link one.color.RGB} object, ie. return the
  * object itself.
  * @function
@@ -329,7 +280,7 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
  */
 
 /**
- * @name one.color.RGB.prototype.toHSV
+ * @name one.color.RGB.prototype.hsv
  * @description Convert the color to a {@link one.color.HSV} object.
  * @function
  * @requires one.color.HSV
@@ -337,7 +288,7 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
  */
 
 /**
- * @name one.color.RGB.prototype.toHSL
+ * @name one.color.RGB.prototype.hsl
  * @description Convert the color to a {@link one.color.HSL} object.
  * @function
  * @requires one.color.HSL
@@ -345,7 +296,7 @@ one.color.installColorSpace('RGB', ['Red', 'Green', 'Blue', 'Alpha'], {
  */
 
 /**
- * @name one.color.RGB.prototype.toCMYK
+ * @name one.color.RGB.prototype.cmyk
  * @description Convert the color to a {@link one.color.CMYK} object.
  * @function
  * @requires one.color.CMYK
@@ -450,115 +401,71 @@ one.color.parse = function (obj) {
  * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
  * and adjust methods from all other installed colorspaces, so
  * although you can use the explicit conversion methods ({@link
- * one.color.HSV#toRGB}, {@link one.color.HSV#toHSL}...), the below
+ * one.color.HSV#rgb}, {@link one.color.HSV#hsl}...), the below
  * will work just fine:</p><pre><code>
 
 new one.color.HSV(.9, .2, .4).
-    adjustBlue(-.4). // Implicit conversion to RGB
-    setCyan(-.1). // Implicit conversion to CMYK
-    toHex(); // "#665200"
+    blue(-.4, true). // Implicit conversion to RGB
+    cyan(-.1). // Implicit conversion to CMYK
+    hex(); // "#665200"
 </code></pre>
  *
  * @constructor
  * Create a new one.color.HSV object. Component values outside the
  * supported range, [0..1], will be adjusted automatically.
- * @param {Number} h The hue component, range: [0..1]
- * @param {Number} s The saturation component, range: [0..1]
- * @param {Number} v The value component, range: [0..1]
- * @param {Number} [a] The alpha value, range: [0..1],
+ * @param {Number} hue The hue component, range: [0..1]
+ * @param {Number} saturation The saturation component, range: [0..1]
+ * @param {Number} value The value component, range: [0..1]
+ * @param {Number} [alpha] The alpha value, range: [0..1],
  * defaults to 1
  */
 
 /**
- * @name one.color.HSV.prototype.h
- * @property
- * @type Number
- * @description The hue component, range: [0..1]
- */
-
-/**
- * @name one.color.HSV.prototype.s
- * @property
- * @type Number
- * @description The saturation component, range: [0..1]
- */
-
-/**
- * @name one.color.HSV.prototype.v
- * @property
- * @type Number
- * @description The value component, range: [0..1]
- */
-
-/**
- * @name one.color.HSV.prototype.a
- * @property
- * @type Number
- * @description The alpha value, range: [0..1]
- */
-
-/**
- * @name one.color.HSV.prototype.setHue
+ * @name one.color.HSV.prototype.hue
  * @function
- * @param {Number} h The new hue component, range: [0..1]
- * @return {one.color.HSV} New color object with the changed value.
+ * @param {Number} [hue] The new hue component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSV} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSV.prototype.setSaturation
+ * @name one.color.HSV.prototype.saturation
  * @function
- * @param {Number} s The new saturation component, range: [0..1]
- * @return {one.color.HSV} New color object with the changed value.
+ * @param {Number} [saturation] The new saturation component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSV} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSV.prototype.setValue
+ * @name one.color.HSV.prototype.value
  * @function
- * @param {Number} l The new value component, range: [0..1]
- * @return {one.color.HSV} New color object with the changed value.
+ * @param {Number} [value] The new value component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSV} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSV.prototype.setAlpha
+ * @name one.color.HSV.prototype.alpha
  * @function
- * @param {Number} a The new alpha value, range: [0..1]
- * @return {one.color.HSV} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSV.prototype.adjustHue
- * @function
- * @param {Number} h The value to add to the hue component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.HSV} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSV.prototype.adjustSaturation
- * @function
- * @param {Number} s The value to add to the saturation component. If the
- * resulting value falls outside the supported range, [0..1], it will
- * be adjusted automatically.
- * @return {one.color.HSV} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSV.prototype.adjustValue
- * @function
- * @param {Number} v The value to add to the value component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.HSV} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSV.prototype.adjustAlpha
- * @function
- * @param {Number} a The value to add to the alpha value. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.HSV} New color object with the changed value.
+ * @param {Number} [alpha] The new alpha component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSV} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
@@ -569,21 +476,21 @@ new one.color.HSV(.9, .2, .4).
  */
 
 /**
- * @name one.color.HSV.prototype.toRGB
+ * @name one.color.HSV.prototype.rgb
  * @description Convert the color to a {@link one.color.RGB} object.
  * @function
  * @return {one.color.RGB}
  */
 
 /**
- * @name one.color.HSV.prototype.toHSV
+ * @name one.color.HSV.prototype.hsv
  * @description Convert the color to a {@link one.color.HSV} object, ie. return the object itself.
  * @function
  * @return {one.color.HSV}
  */
 
 /**
- * @name one.color.HSV.prototype.toHSL
+ * @name one.color.HSV.prototype.hsl
  * @description Convert the color to a {@link one.color.HSL} object.
  * @function
  * @requires one.color.HSL
@@ -591,7 +498,7 @@ new one.color.HSV(.9, .2, .4).
  */
 
 /**
- * @name one.color.HSV.prototype.toCMYK
+ * @name one.color.HSV.prototype.cmyk
  * @description Convert the color to a {@link one.color.CMYK} object.
  * @function
  * @include one.color.CMYK
@@ -599,98 +506,108 @@ new one.color.HSV(.9, .2, .4).
  */
 
 /**
- * @name one.color.HSV.prototype.toHex
+ * @name one.color.HSV.prototype.hex
  * @description Get the standard RGB hex representation of the color.
  * @function
  * @return {String} The hex string, e.g. "#f681df"
  */
 
 /**
- * @name one.color.HSV.prototype.toCSS
+ * @name one.color.HSV.prototype.css
  * @description Get a valid CSS color representation of the color without an alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
  */
 
 /**
- * @name one.color.HSV.prototype.toCSSWithAlpha
+ * @name one.color.HSV.prototype.cssa
  * @description Get a valid CSS color representation of the color, including the alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
-one.color.installColorSpace('HSV', ['Hue', 'Saturation', 'Value', 'Alpha'], {
-    toRGB: function () {
-        var r, g, b,
-            i = Math.min(5, Math.floor(this.h * 6)),
-            f = this.h * 6 - i,
-            p = this.v * (1 - this.s),
-            q = this.v * (1 - f * this.s),
-            t = this.v * (1 - (1 - f) * this.s);
+one.color.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
+    rgb: function () {
+        var hue = this._hue,
+            saturation = this._saturation,
+            value = this._value,
+            i = Math.min(5, Math.floor(hue * 6)),
+            f = hue * 6 - i,
+            p = value * (1 - saturation),
+            q = value * (1 - f * saturation),
+            t = value * (1 - (1 - f) * saturation),
+            red,
+            green,
+            blue;
         switch (i) {
         case 0:
-            r = this.v;
-            g = t;
-            b = p;
+            red = value;
+            green = t;
+            blue = p;
             break;
         case 1:
-            r = q;
-            g = this.v;
-            b = p;
+            red = q;
+            green = value;
+            blue = p;
             break;
         case 2:
-            r = p;
-            g = this.v;
-            b = t;
+            red = p;
+            green = value;
+            blue = t;
             break;
         case 3:
-            r = p;
-            g = q;
-            b = this.v;
+            red = p;
+            green = q;
+            blue = value;
             break;
         case 4:
-            r = t;
-            g = p;
-            b = this.v;
+            red = t;
+            green = p;
+            blue = value;
             break;
         case 5:
-            r = this.v;
-            g = p;
-            b = q;
+            red = value;
+            green = p;
+            blue = q;
             break;
         }
-        return new one.color.RGB(r, g, b, this.a);
+        return new one.color.RGB(red, green, blue, this._alpha);
     },
 
-    toHSL: function () {
+    hsl: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var s = this.s * this.v,
-            l = (2 - this.s) * this.v;
-        return new one.color.HSL(this.h, s / (l <= 1 ? l : (2 - l)), l / 2, this.a);
+        var saturation = this._saturation,
+            value = this._value,
+            s = saturation * value,
+            l = (2 - saturation) * value;
+        return new one.color.HSL(this._hue, s / (l <= 1 ? l : (2 - l)), l / 2, this._alpha);
     },
 
-    fromRGB: function () { // Becomes one.color.RGB.prototype.toHSV
-        var max = Math.max(this.r, this.g, this.b),
-            min = Math.min(this.r, this.g, this.b),
+    fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
+        var red = this._red,
+            green = this._green,
+            blue = this._blue,
+            max = Math.max(red, green, blue),
+            min = Math.min(red, green, blue),
             delta = max - min,
-            h,
-            s = (max === 0) ? 0 : (delta / max),
-            v = max;
+            hue,
+            saturation = (max === 0) ? 0 : (delta / max),
+            value = max;
         if (delta === 0) {
-            h = 0;
+            hue = 0;
         } else {
             switch (max) {
-            case this.r:
-                h = (this.g - this.b) / delta / 6 + (this.g < this.b ? 1 : 0);
+            case red:
+                hue = (green - blue) / delta / 6 + (green < blue ? 1 : 0);
                 break;
-            case this.g:
-                h = (this.b - this.r) / delta / 6 + 1 / 3;
+            case green:
+                hue = (blue - red) / delta / 6 + 1 / 3;
                 break;
-            case this.b:
-                h = (this.r - this.g) / delta / 6 + 2 / 3;
+            case blue:
+                hue = (red - green) / delta / 6 + 2 / 3;
                 break;
             }
         }
-        return new one.color.HSV(h, s, v, this.a);
+        return new one.color.HSV(hue, saturation, value, this._alpha);
     }
 });
 
@@ -707,137 +624,93 @@ one.color.installColorSpace('HSV', ['Hue', 'Saturation', 'Value', 'Alpha'], {
  * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
  * and adjust methods from all other installed colorspaces, so
  * although you can use the explicit conversion methods ({@link
- * one.color.HSL#toRGB}, {@link one.color.HSL#toHSV}...), the below
+ * one.color.HSL#rgb}, {@link one.color.HSL#hsv}...), the below
  * will work just fine:</p><pre><code>
 
 new one.color.HSL(.4, .3, .9, .9). // HSL with alpha
-    adjustBlack(+.1). // Implicit conversion to CMYK (with alpha)
-    setGreen(-.1). // Implicit conversion to RGB (with alpha)
-    toCSSWithAlpha(); // "rgba(198,0,203,0.9)"
+    black(+.1, true). // Implicit conversion to CMYK (with alpha)
+    green(-.1). // Implicit conversion to RGB (with alpha)
+    cssa(); // "rgba(198,0,203,0.9)"
 </code></pre>
  *
  * @constructor
  * Create a new one.color.HSL object. Component values outside the
  * supported range, [0..1], will be adjusted automatically.
- * @param {Number} h The hue component, range: [0..1]
- * @param {Number} s The saturation component, range: [0..1]
- * @param {Number} l The lightness component, range: [0..1]
- * @param {Number} [a] The alpha value, range: [0..1],
+ * @param {Number} hue The hue component, range: [0..1]
+ * @param {Number} saturation The saturation component, range: [0..1]
+ * @param {Number} lightness The lightness component, range: [0..1]
+ * @param {Number} [alpha] The alpha value, range: [0..1],
  * defaults to 1
  */
 
-one.color.installColorSpace('HSL', ['Hue', 'Saturation', 'Lightness', 'Alpha'], {
-    toHSV: function () {
+one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
+    hsv: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var s = this.s,
-            l = this.l * 2;
-        if (l <= 1) {
-            s *= l;
+        var saturation = this._saturation,
+            lightness = this._lightness * 2;
+        if (lightness <= 1) {
+            saturation *= lightness;
         } else {
-            s *= (2 - l);
+            saturation *= (2 - lightness);
         }
-        return new one.color.HSV(this.h, (2 * s) / (l + s), (l + s) / 2, this.a);
+        return new one.color.HSV(this._hue, (2 * saturation) / (lightness + saturation), (lightness + saturation) / 2, this._alpha);
     },
 
-    toRGB: function () {
-        return this.toHSV().toRGB();
+    rgb: function () {
+        return this.hsv().rgb();
     },
 
-    fromRGB: function () { // Becomes one.color.RGB.prototype.toHSV
-        return this.toHSV().toHSL();
+    fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
+        return this.hsv().hsl();
     }
 });
 
 /**
- * @name one.color.HSL.prototype.h
- * @property
- * @type Number
- * @description The hue component, range: [0..1]
- */
-
-/**
- * @name one.color.HSL.prototype.s
- * @property
- * @type Number
- * @description The saturation component, range: [0..1]
- */
-
-/**
- * @name one.color.HSL.prototype.l
- * @property
- * @type Number
- * @description The lightness component, range: [0..1]
- */
-
-/**
- * @name one.color.HSL.prototype.a
- * @property
- * @type Number
- * @description The alpha value, range: [0..1]
- */
-
-/**
- * @name one.color.HSL.prototype.setHue
+ * @name one.color.HSL.prototype.hue
  * @function
- * @param {Number} h The new hue component, range: [0..1]
- * @return {one.color.HSL} New color object with the changed value.
+ * @param {Number} [hue] The new hue component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSL} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSL.prototype.setSaturation
+ * @name one.color.HSL.prototype.saturation
  * @function
- * @param {Number} s The new saturation component, range: [0..1]
- * @return {one.color.HSL} New color object with the changed value.
+ * @param {Number} [saturation] The new saturation component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSL} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSL.prototype
- * @function setLightness
- * @param {Number} l The new lightness component, range: [0..1]
- * @return {one.color.HSL} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSL.prototype.setAlpha
+ * @name one.color.HSL.prototype.lightness
  * @function
- * @param {Number} a The new alpha value, range: [0..1]
- * @return {one.color.HSL} New color object with the changed value.
+ * @param {Number} [lightness] The new lightness component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSL} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.HSL.prototype.adjustHue
+ * @name one.color.HSL.prototype.alpha
  * @function
- * @param {Number} h The value to add to the hue component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.HSL} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSL.prototype.adjustSaturation
- * @function
- * @param {Number} s The value to add to the saturation component. If the
- * resulting value falls outside the supported range, [0..1], it will
- * be adjusted automatically.
- * @return {one.color.HSL} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSL.prototype.adjustLightness
- * @function
- * @param {Number} l The value to add to the lightness component. If the
- * resulting value falls outside the supported range, [0..1], it will
- * be adjusted automatically.
- * @return {one.color.HSL} New color object with the changed value.
- */
-
-/**
- * @name one.color.HSL.prototype.adjustAlpha
- * @function
- * @param {Number} a The value to add to the alpha value. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.HSL} New color object with the changed value.
+ * @param {Number} [alpha] The new alpha component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.HSL} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
@@ -848,14 +721,14 @@ one.color.installColorSpace('HSL', ['Hue', 'Saturation', 'Lightness', 'Alpha'], 
  */
 
 /**
- * @name one.color.HSL.prototype.toRGB
+ * @name one.color.HSL.prototype.rgb
  * @description Convert the color to a {@link one.color.RGB} object.
  * @function
  * @return {one.color.RGB}
  */
 
 /**
- * @name one.color.HSL.prototype.toHSV
+ * @name one.color.HSL.prototype.hsv
  * @description Convert the color to a {@link one.color.HSV} object.
  * @function
  * @return {one.color.HSV}
@@ -863,14 +736,14 @@ one.color.installColorSpace('HSL', ['Hue', 'Saturation', 'Lightness', 'Alpha'], 
  */
 
 /**
- * @name one.color.HSL.prototype.toHSL
+ * @name one.color.HSL.prototype.hsl
  * @description Convert the color to a {@link one.color.HSL} object, ie. return the object itself.
  * @function
  * @return {one.color.HSL}
  */
 
 /**
- * @name one.color.HSL.prototype.toCMYK
+ * @name one.color.HSL.prototype.cmyk
  * @description Convert the color to a {@link one.color.CMYK} object.
  * @function
  * @requires one.color.CMYK
@@ -878,21 +751,21 @@ one.color.installColorSpace('HSL', ['Hue', 'Saturation', 'Lightness', 'Alpha'], 
  */
 
 /**
- * @name one.color.HSL.prototype.toHex
+ * @name one.color.HSL.prototype.hex
  * @description Get the standard RGB hex representation of the color.
  * @function
  * @return {String} The hex string, e.g. "#f681df"
  */
 
 /**
- * @name one.color.HSL.prototype.toCSS
+ * @name one.color.HSL.prototype.css
  * @description Get a valid CSS color representation of the color without an alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
  */
 
 /**
- * @name one.color.HSL.prototype.toCSSWithAlpha
+ * @name one.color.HSL.prototype.cssa
  * @description Get a valid CSS color representation of the color, including the alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
@@ -909,141 +782,86 @@ one.color.installColorSpace('HSL', ['Hue', 'Saturation', 'Lightness', 'Alpha'], 
  * objects.</p>
  * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
  * and adjust methods from all other installed colorspaces, so
- * although you can use the explicit conversion methods ({@link one.color.CMYK#toRGB},
- * {@link one.color.CMYK#toHSL}...), the below
+ * although you can use the explicit conversion methods ({@link one.color.CMYK#rgb},
+ * {@link one.color.CMYK#hsl}...), the below
  * will work just fine:</p><pre><code>
 
 new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
-    setBlue(-.2). // Implicit conversion to RGB (with alpha)
-    adjustHue(-.1). // Implicit conversion to HSL(/HSV) (with alpha)
-    toCSSWithAlpha(); // "rgba(20,13,0,0.2)"
+    blue(.2). // Implicit conversion to RGB (with alpha)
+    hue(-.1, true). // Implicit conversion to HSL(/HSV) (with alpha)
+    cssa(); // "rgba(20,13,0,0.2)"
 </code></pre>
  * @static
  *
  * @constructor
  * Create a new one.color.CMYK object. Component values outside the
  * supported range, [0..1], will be adjusted automatically.
- * @param {Number} c The cyan component, range: [0..1]
- * @param {Number} m The magenta component, range: [0..1]
- * @param {Number} y The yellow component, range: [0..1]
- * @param {Number} k The black component, range: [0..1]
- * @param {Number} [a] The alpha value, range: [0..1],
+ * @param {Number} cyan The cyan component, range: [0..1]
+ * @param {Number} magenta The magenta component, range: [0..1]
+ * @param {Number} yellow The yellow component, range: [0..1]
+ * @param {Number} black The black component, range: [0..1]
+ * @param {Number} [alpha] The alpha value, range: [0..1],
  * defaults to 1
  */
 
 /**
- * @name one.color.CMYK.prototype.c
- * @property
- * @type Number
- * @description The cyan component, range: [0..1]
- */
-
-/**
- * @name one.color.CMYK.prototype.m
- * @property
- * @type Number
- * @description The magenta component, range: [0..1]
- */
-
-/**
- * @name one.color.CMYK.prototype.y
- * @property
- * @type Number
- * @description The yellow component, range: [0..1]
- */
-
-/**
- * @name one.color.CMYK.prototype.k
- * @property
- * @type Number
- * @description The black component, range: [0..1]
- */
-
-/**
- * @name one.color.CMYK.prototype.a
- * @property
- * @type Number
- * @description The alpha value, range: [0..1]
- */
-
-/**
- * @name one.color.CMYK.prototype.setCyan
+ * @name one.color.CMYK.prototype.cyan
  * @function
- * @param {Number} c The new cyan component, range: [0..1]
- * @return {one.color.CMYK} New color object with the changed value.
+ * @param {Number} [cyan] The new cyan component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.CMYK.prototype.setMagenta
+ * @name one.color.CMYK.prototype.magenta
  * @function
- * @param {Number} m The new magenta component, range: [0..1]
- * @return {one.color.CMYK} New color object with the changed value.
+ * @param {Number} [magenta] The new magenta component, range:
+ * [0..1]. If not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.CMYK.prototype.setYellow
+ * @name one.color.CMYK.prototype.yellow
  * @function
- * @param {Number} y The new yellow component, range: [0..1]
- * @return {one.color.CMYK} New color object with the changed value.
+ * @param {Number} yellow The new yellow component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.CMYK.prototype.setBlack
+ * @name one.color.CMYK.prototype.black
  * @function
- * @param {Number} k The new black component, range: [0..1]
- * @return {one.color.CMYK} New color object with the changed value.
+ * @param {Number} black The new black component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
- * @name one.color.CMYK.prototype.setAlpha
+ * @name one.color.CMYK.prototype.alpha
  * @function
- * @param {Number} a The new alpha value, range: [0..1]
- * @return {one.color.CMYK} New color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.adjustCyan
- * @function
- * @param {Number} c The value to add to the cyan component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.CMYK} New color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.adjustMagenta
- * @function
- * @param {Number} m The value to add to the magenta component. If the
- * resulting value falls outside the supported range, [0..1], it will
- * be adjusted automatically.
- * @return {one.color.CMYK} New color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.adjustYellow
- * @function
- * @param {Number} y The value to add to the yellow component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.CMYK} New color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.adjustBlack
- * @function
- * @param {Number} k The value to add to the black component. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.CMYK} New color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.adjustAlpha
- * @function
- * @param {Number} a The value to add to the alpha value. If the resulting
- * value falls outside the supported range, [0..1], it will be
- * adjusted automatically.
- * @return {one.color.CMYK} New color object with the changed value.
+ * @param {Number} alpha The new alpha value, range: [0..1]. If not
+ * provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
  */
 
 /**
@@ -1054,14 +872,14 @@ new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
  */
 
 /**
- * @name one.color.CMYK.prototype.toRGB
+ * @name one.color.CMYK.prototype.rgb
  * @description Convert the color to a {@link one.color.RGB} object.
  * @function
  * @return {one.color.RGB}
  */
 
 /**
- * @name one.color.CMYK.prototype.toHSV
+ * @name one.color.CMYK.prototype.hsv
  * @description Convert the color to a {@link one.color.HSV} object.
  * @function
  * @requires one.color.HSV
@@ -1069,7 +887,7 @@ new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
  */
 
 /**
- * @name one.color.CMYK.prototype.toHSL
+ * @name one.color.CMYK.prototype.hsl
  * @description Convert the color to a {@link one.color.HSL} object.
  * @function
  * @requires one.color.HSL
@@ -1077,56 +895,59 @@ new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
  */
 
 /**
- * @name one.color.CMYK.prototype.toCMYK
+ * @name one.color.CMYK.prototype.cmyk
  * @description Convert the color to a {@link one.color.CMYK} object, ie. return the object itself.
  * @function
  * @return {one.color.CMYK}
  */
 
 /**
- * @name one.color.CMYK.prototype.toHex
+ * @name one.color.CMYK.prototype.hex
  * @description Get the standard RGB hex representation of the color.
  * @function
  * @return {String} The hex string, e.g. "#f681df"
  */
 
 /**
- * @name one.color.CMYK.prototype.toCSS
+ * @name one.color.CMYK.prototype.css
  * @description Get a valid CSS color representation of the color without an alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
  */
 
 /**
- * @name one.color.CMYK.prototype.toCSSWithAlpha
+ * @name one.color.CMYK.prototype.cssa
  * @description Get a valid CSS color representation of the color, including the alpha value.
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
 
-one.color.installColorSpace('CMYK', ['Cyan', 'Magenta', 'Yellow', 'blacK', 'Alpha'], {
-    toRGB: function () {
-        return new one.color.RGB((1 - this.c * (1 - this.k) - this.k),
-                                 (1 - this.m * (1 - this.k) - this.k),
-                                 (1 - this.y * (1 - this.k) - this.k),
-                                 this.a);
+one.color.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
+    rgb: function () {
+        return new one.color.RGB((1 - this._cyan * (1 - this._black) - this._black),
+                                 (1 - this._magenta * (1 - this._black) - this._black),
+                                 (1 - this._yellow * (1 - this._black) - this._black),
+                                 this._alpha);
     },
 
-    fromRGB: function () { // Becomes one.color.RGB.prototype.toCMYK
+    fromRgb: function () { // Becomes one.color.RGB.prototype.cmyk
         // Adapted from http://www.javascripter.net/faq/rgb2cmyk.htm
-        var c = 1 - this.r,
-            m = 1 - this.g,
-            y = 1 - this.b,
-            k = 1;
-        if (this.r || this.g || this.b) {
-            k = Math.min(c, Math.min(m, y));
-            c = (c - k) / (1 - k);
-            m = (m - k) / (1 - k);
-            y = (y - k) / (1 - k);
+        var red = this._red,
+            green = this._green,
+            blue = this._blue,
+            cyan = 1 - red,
+            magenta = 1 - green,
+            yellow = 1 - blue,
+            black = 1;
+        if (red || green || blue) {
+            black = Math.min(cyan, Math.min(magenta, yellow));
+            cyan = (cyan - black) / (1 - black);
+            magenta = (magenta - black) / (1 - black);
+            yellow = (yellow - black) / (1 - black);
         } else {
-            k = 1;
+            black = 1;
         }
-        return new one.color.CMYK(c, m, y, k, this.a);
+        return new one.color.CMYK(cyan, magenta, yellow, black, this._alpha);
     }
 });
 
