@@ -61,7 +61,7 @@ one.color = function (obj) {
                 parseFloat(matchCssSyntax[1]) / (matchCssSyntax[2] ? 100 : 255),
                 parseFloat(matchCssSyntax[3]) / (matchCssSyntax[4] ? 100 : 255),
                 parseFloat(matchCssSyntax[5]) / (matchCssSyntax[6] ? 100 : 255),
-                parseFloat(matchCssSyntax[7])
+                typeof matchCssSyntax[7] === 'undefined' ? matchCssSyntax[7] : parseFloat(matchCssSyntax[7])
             );
         }
         // Assume hex syntax
@@ -109,7 +109,7 @@ one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
         propertyNames.map(function (propertyName) {
             if (propertyName === 'hue') {
                 return "this._hue=hue<0?hue-Math.floor(hue):hue%1"; // Wrap
-            } else if (propertyName === 'a') {
+            } else if (propertyName === 'alpha') {
                 return "this._alpha=(isNaN(alpha)||alpha>1)?1:(alpha<0?0:alpha);";
             } else {
                 return "this._" + propertyName + "=" + propertyName + "<0?0:(" + propertyName + ">1?1:" + propertyName + ")";
