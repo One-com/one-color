@@ -1,4 +1,0 @@
-\frametitle {Node Advice \#3:}
-\begin{lstlisting}[language=sh]
-curl http://npmjs.org/install.sh | sh
-\end{lstlisting}

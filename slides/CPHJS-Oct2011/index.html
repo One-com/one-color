@@ -11,12 +11,13 @@
 </head>
 <body data-duration="30">
 
-<header id="intro" class="slide">
-	<h1>One-color.js</h1>
-	<h2>JS colors made easy</h2>
-	<p class="attribution">Peter Müller, Web developer @onecom</p>
-</header>
-<section>
+<section title="Introduction">
+    <header id="intro" class="slide">
+	    <h1>One-color.js</h1>
+	    <h2>JS colors made easy</h2>
+	    <p class="attribution">Peter Müller, Web developer @onecom</p>
+    </header>
+    
 	<header class="slide">
 		<h1>Introduction</h1>
 		<ul class="presenter-notes">
@@ -26,8 +27,10 @@
             <li>Rich JS clients, Ext JS</li>
 		</ul>
 	</header>
+</section>
 
-	<section class="slide" title="Why?">
+<section title="Applications">
+	<section class="slide">
 		<h2>Why do we need it?</h2>
 	    <img class="delayed" src="images/blog.png">
 	    <p class="presenter-notes">
@@ -52,7 +55,7 @@
 	</section>
 </section>
 
-<section>
+<section title="Getting to know the domain">
     <header class="slide">
         <h1>But first...</h1>
         <p class="presenter-notes">
@@ -88,7 +91,7 @@
         <img src="images/RGB_HSL_HSV_comparison.png" style="margin-top: 180px;">
     </section>
     <section class="slide">
-        <h2>Color representations</h2>
+        <h2>CSS syntaxes</h2>
         <ul>
             <li class="delayed">Hex: "#123456"</li>
             <li class="delayed">RGB: "rgb(100, 100, 100)"</li>
@@ -97,17 +100,145 @@
             <li class="delayed">HSLA: "hsla(100, 100, 100, 0.5)</li>
         </ul>
     </section>
+    <section class="slide">
+        <h2>Javascript syntax</h2>
+        <ul>
+            <li class="bad delayed">None?</li>
+        </ul>
+    </section>
 </section>
 
-<section>
+<section title="Lets find a library">
+    <section class="slide">
+        <h2>Specifications</h2>
+        <ul>
+            <li class="good delayed">RGB, HSL and HSV support with conversions</li>
+            <li class="good delayed">A 'datatype'</li>
+            <li class="good delayed">Pluggable architecture</li>
+            <li class="good delayed">Chainable channel modifiers</li>
+            <li class="good delayed">SMALL!</li>
+        </ul>
+    </section>
+    
 	<section class="slide">
 	    <h2>Options</h2>
 	    <ul>
-	        <li class="delayed">Ext JS 4</li>
+	        <li class="delayed">Ext JS</li>
 	        <li class="delayed">Micro library</li>
 	        <li class="delayed">Roll your own</li>
 	    </ul>
+	    <p class="delayed">Lets have a look...</p>
 	</section>
+    
+    <section class="slide">
+        <h2>Ext JS</h2>
+        <img class="delayed" src="images/ExtJS.png">
+        <ul>
+            <li class="bad delayed">Seriously?</li>
+        </ul>
+        <ul class="presenter-notes">
+            <li class="bad">Representation: Hex-string</li>
+            <li class="bad">Color spaces</li>
+            <li class="bad">Color conversion</li>
+        </ul>
+    </section>
+    
+    <section class="slide">
+        <h2>Micro library</h2>
+        <ul>
+            <li class="good delayed">Lots to choose from</li>
+            <li class="bad delayed">Lots to choose from!</li>
+            <li class="good delayed">Math is well documented</li>
+            <li class="bad delayed">Architecture is difficult</li>
+        </ul>
+        <p class="delayed">Lets look at some examples</p>
+    </section>
+    
+    <section title="Microlib examples">
+        <section class="slide">
+            <h2>Lack of data model</h2>
+            <ul>
+                <li class="bad delayed"><code>"#000000"</code></li>
+                <li class="bad delayed"><code>[0, 0, 0]</code></li>
+                <li class="bad delayed"><code>{ R: <span style="color: #FAA">0</span>, G: <span style="color: #AFA">0</span>, B: <span style="color: #AAF">0</span> }</code></li>
+                <li class="good delayed"><code>{ space: 'rgb', R: <span style="color: #FAA">0</span>, G: <span style="color: #AFA">0</span>, B: <span style="color: #AAF">0</span> }</code></li>
+            </ul>
+        </section>
+        
+        <section class="slide">
+            <h2>Conversion methods</h2>
+            <ul class="delayed">
+                <li>fromHexToRGB()</li>
+                <li>fromRGBToHex()</li>
+            </ul>
+            <ul class="delayed">
+                <li>fromHexToHSV()</li>
+                <li>fromRGBToHSV()</li>
+                <li>fromHSVToHex()</li>
+                <li>fromHSVToRGB()</li>
+            </ul>
+            <ul class="delayed">
+                <li>fromHexToHSL()</li>
+                <li>fromRGBToHSL()</li>
+                <li>fromHSVToHSL()</li>
+                <li>fromHSLToHex()</li>
+                <li>fromHSLToRGB()</li>
+                <li>fromHSLToHSV()</li>
+            </ul>
+            <img class="delayed" id="conversion" src="images/PullingHair.png">
+            <ul class="presenter-notes">
+                <li>RGB and HEX. Simple</li>
+                <li>Lets add HSV</li>
+                <li>Now HSL... You see where this is going</li>
+                <li>Lots of methods, lots of bytes, lots of mental maintenance</li>
+            </p>
+        </section>
+        
+        <section class="slide">
+            <h2>Chained modifiers</h2>
+            <ul>
+                <li class="delayed">Object with conversion methods</li>
+                <li class="delayed">Object with channel modifier methods</li>
+            </ul>
+        </section>
+        
+        <section class="slide" id="reps">
+            <h2>Color representation</h2>
+            <ul class="delayed">
+                <li>Red: [0;255]</li>
+                <li>Green: [0;255]</li>
+                <li>Blue: [0;255]</li>
+            </ul>
+            <ul class="delayed">
+                <li>Hue: [0;360]</li>
+                <li>Saturation: [0;100]</li>
+                <li>Value: [0;100]</li>
+                <li>Lightness: [0;100]</li>
+            </ul>
+            <ul class="delayed">
+                <li>Cyan: [0;100]</li>
+                <li>Magenta: [0;100]</li>
+                <li>Yellow: [0;100]</li>
+                <li>blacK: [0;100]</li>
+            </ul>
+            <p class="delayed">Color math: [0;1]</p>
+            <p class="presenter-notes">Every color space have channels in different ranges externally, but internally they convert to color math</p>
+        </section>
+        
+        <section class="slide">
+            <h2>And the winner is...</h2>
+            <ul>
+                <li class="bad delayed">None :(</li>
+            </ul>
+            <p class="delayed">... but take a look at <a href="https://github.com/harthur/color">https://github.com/harthur/color</a>, lots of good ideas!</p>
+        </section>
+    </section>
+</section>
+
+<section>
+    <header class="slide">
+        <h1>DEMOTIME!</h1>
+    </header>
 </section>
 
 <footer>

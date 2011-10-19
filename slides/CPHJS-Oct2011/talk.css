@@ -4,11 +4,6 @@ html {
 }
 
 #intro h1 {
-/*
-	width: 60%;
-	min-height: 500px;
-	margin: 5% auto 0;
-	*/
 	font-size: 2in;
 	text-align: center;
 }
@@ -37,4 +32,42 @@ html {
 .slide img {
     display: block;
     margin: 0 auto;
+}
+
+.slide > ul > li::before {
+    content: '\25BA';
+    color: #c1bf2c;
+}
+
+.slide > ul > li.good::before {
+    content: '\2714';
+    color: #A0C12C;
+}
+
+.slide > ul > li.bad::before {
+    content: '\2717';
+    color: #c12c2c;
+}
+
+/* Conversion methods slide */
+#conversion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -115px;
+    margin-top: -220px;
+}
+
+#reps ul {
+    float: left;
+    width: 33.33%;
+}
+#reps > ul > li::before {
+    content: '';
+}
+#reps p {
+    clear: both;
+    padding-top: 50px;
+    text-align: center;
+    font-size: 150%;
 }

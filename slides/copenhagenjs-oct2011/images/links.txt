@@ -1,8 +1,0 @@
-http://commons.wikimedia.org/wiki/File:Hsl-hsv_models_b.svg
-http://en.wikipedia.org/wiki/File:HSV_color_solid_cylinder_alpha_lowgamma.png
-http://upload.wikimedia.org/wikipedia/commons/d/d3/Spectrum.2400.1800.S.G.png
-http://upload.wikimedia.org/wikipedia/commons/9/97/RGB_HSL_HSV_comparison.png
-
-
-http://happylandmaps.free.fr/png/RGB_cube_glue.png
-http://jacemiller.net/images/colorSpace.jpg

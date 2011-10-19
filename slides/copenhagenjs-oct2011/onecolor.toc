@@ -1,2 +1,0 @@
-\beamer@endinputifotherversion {3.07pt}
-\select@language {danish}
