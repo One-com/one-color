@@ -11,7 +11,7 @@ outputfiles := one-color-debug.js one-color.js
 
 .PHONY : all clean
 
-all: $(outputfiles) doc
+all: $(outputfiles)
 
 one-color-debug.js: $(jsfiles)
 	flattenOneInclude lib/one/color/_all.js --label js=lib > $@
