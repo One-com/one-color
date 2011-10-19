@@ -54,14 +54,14 @@ myColor = color(myColor);
 one.color = function (obj) {
     if (obj.charCodeAt) {
         // Test for CSS rgb(....) string
-        var matchCssSyntax = obj.match(/^rgba?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i);
+        var matchCssSyntax = obj.match(/^(rgb|hsl|hsv)a?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i);
 
         if (matchCssSyntax) {
-            return new one.color.RGB(
-                parseFloat(matchCssSyntax[1]) / (matchCssSyntax[2] ? 100 : 255),
-                parseFloat(matchCssSyntax[3]) / (matchCssSyntax[4] ? 100 : 255),
-                parseFloat(matchCssSyntax[5]) / (matchCssSyntax[6] ? 100 : 255),
-                typeof matchCssSyntax[7] === 'undefined' ? matchCssSyntax[7] : parseFloat(matchCssSyntax[7])
+            return new one.color[matchCssSyntax[1].toUpperCase()](
+                parseFloat(matchCssSyntax[2]) / (matchCssSyntax[3] ? 100 : 255),
+                parseFloat(matchCssSyntax[4]) / (matchCssSyntax[5] ? 100 : 255),
+                parseFloat(matchCssSyntax[6]) / (matchCssSyntax[7] ? 100 : 255),
+                typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8])
             );
         }
         // Assume hex syntax
