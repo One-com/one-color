@@ -3,6 +3,16 @@ html {
 	background-size: cover;
 }
 
+.delayed.displayed, .delayed-children > .displayed {
+    opacity: .5;
+}
+
+pre .delayed.displayed,
+pre.delayed.displayed,
+.delayed-children > .displayed {
+    opacity: 1;
+}
+
 #intro h1 {
 	font-size: 2in;
 	text-align: center;
@@ -70,4 +80,10 @@ html {
     padding-top: 50px;
     text-align: center;
     font-size: 150%;
+}
+
+/* Specs slide */
+#specs ul {
+    float: left;
+    width: 50%;
 }

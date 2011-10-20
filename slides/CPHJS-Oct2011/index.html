@@ -112,10 +112,11 @@
     <section class="slide">
         <h2>Specifications</h2>
         <ul>
-            <li class="good delayed">RGB, HSL and HSV support with conversions</li>
+            <li class="good delayed">RGB, HSL and HSV</li>
+            <li class="good delayed">Colorspace conversions</li>
             <li class="good delayed">A 'datatype'</li>
             <li class="good delayed">Pluggable architecture</li>
-            <li class="good delayed">Chainable channel modifiers</li>
+            <li class="good delayed">Chainable modifiers</li>
             <li class="good delayed">SMALL!</li>
         </ul>
     </section>
@@ -232,6 +233,58 @@
             </ul>
             <p class="delayed">... but take a look at <a href="https://github.com/harthur/color">https://github.com/harthur/color</a>, lots of good ideas!</p>
         </section>
+    </section>
+</section>
+
+<section>
+    <header class="slide">
+        <h1>One-color.js</h1>
+    </header>
+
+    <section class="slide" id="specs">
+        <h2>Specifications</h2>
+        <ul>
+            <li class="good">RGB, HSL and HSV</li>
+            <li class="good">Colorspace conversions</li>
+            <li class="good">A 'datatype'</li>
+            <li class="good">Pluggable architecture</li>
+            <li class="good">Chainable modifiers</li>
+            <li class="good">SMALL!</li>
+        </ul>
+        <ul>
+            <li class="good delayed">Parse once</li>
+            <li class="good delayed">Round once</li>
+            <li class="good delayed">Avoid loss of precision</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Base</h2>
+        <pre>one = { // General One.com namespace
+    <span class="delayed">color = function( String | Array | one.color.* | Number ), // Parser</span>
+    <span class="delayed">installColorSpace: function ( str space, str channel+, obj methods )</span>
+};
+<span class="delayed">one.installColorSpace("RGB", "<span style="color: #FAA">Red</span>", "<span style="color: #AFA">Green</span>", "<span style="color: #AAF">Blue</span>", "Alpha", {...});</pre>
+        <pre class="delayed">one.color.RGB  = function ( <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1] )</pre>
+        <pre class="delayed">one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
+        <pre class="delayed">one.color.HSL  = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
+        <pre class="delayed">one.color.CMYK = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
+    <ul class="presenter-notes">
+        <li>String: HEX, RGB, HSL, HSV</li>
+        <li>Array: [ space, channels... ]
+        <li>Number: IE has some weird integer thing going on</li>
+    </section>
+
+    <section class="slide">
+        <h2></h2>
+    </section>
+
+    <section class="slide">
+        <h2></h2>
+    </section>
+
+    <section class="slide">
+        <h2></h2>
     </section>
 </section>
 
