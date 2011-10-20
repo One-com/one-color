@@ -21,11 +21,10 @@
 	<header class="slide">
 		<h1>Introduction</h1>
 		<ul class="presenter-notes">
-            <li>Me, @onecom 8 years, html, css, javascript</li>
             <li>One.com, shared hosting webspaces</li>
             <li>8 frontend webdevs adding value to product</li>
             <li>Webmail, Abook, Calendar, Filemanager, Blog, Gallery, Webcreator etc...</li>
-            <li>All partially or completely JS</li>
+            <li>All partially or completely JS → Huge toolchain → Modular libs</li>
 		</ul>
 	</header>
 </section>
@@ -34,16 +33,20 @@
 	<section class="slide">
 		<h2>Why do we need it?</h2>
 	    <img class="delayed" src="images/blog.png">
-	    <p class="presenter-notes">
-	        We have a number of places where there is user choice of color involved. One example is our blog or gallery administration.
-	    </p>
+	    <ul class="presenter-notes">
+	        <li>Administration for blog, gallery etc</li>
+	        <li>User choice</li>
+	        <li>Webpages should look different than the other customers's</li>
+	    </ul>
 	</section>
 	<section class="slide">
 		<h2>Why do we need it?</h2>
 	    <img src="images/calendar.png">
-	    <p class="presenter-notes">
-	        In our calendar there is also user choice, and as an addition we need to autosuggest colors that differ from the previous ones for improved readability.
-	    </p>
+	    <ul class="presenter-notes">
+	        <li>Alternate colors hues</li>
+	        <li>Color variants based on a user choice</li>
+	        <li>Text legibility on random background color</li>
+	    </ul>
 	</section>
 	<section class="slide">
 		<h2>?</h2>
@@ -90,23 +93,26 @@
     </section>
     <section class="slide">
         <img src="images/RGB_HSL_HSV_comparison.png" style="margin-top: 180px;">
+        <ul class="presenter-notes">
+            <li>Conversion to RGB looses information</li>
+            <li>Uniquely defined in RGB</li>
+            <li>White and black ambiguous in HSV, HSL</li>
+            <li>Bonusinfo: There are a lot more color spaces</li>
+        </ul>
     </section>
     <section class="slide">
         <h2>CSS syntaxes</h2>
-        <ul>
-            <li class="delayed">Hex: "#123456"</li>
-            <li class="delayed">RGB: "rgb(100, 100, 100)"</li>
-            <li class="delayed">RGBA: "rgba(100, 100, 100, 0.5)</li>
-            <li class="delayed">HSL: "hsl(100, 100, 100)"</li>
-            <li class="delayed">HSLA: "hsla(100, 100, 100, 0.5)</li>
+        <ul class="nofade">
+            <li class="delayed"><code>#123456</code></li>
+            <li class="delayed"><code>rgb (100, 100, 100)</code></li>
+            <li class="delayed"><code>rgba(100, 100, 100, 0.5)</code></li>
+            <li class="delayed"><code>hsl (100, 100, 100)</code></li>
+            <li class="delayed"><code>hsla(100, 100, 100, 0.5)</code></li>
         </ul>
     </section>
-    <section class="slide">
-        <h2>Javascript syntax</h2>
-        <ul>
-            <li class="bad delayed">None?</li>
-        </ul>
-    </section>
+    <footer class="slide">
+        <h1>No Javascript syntax <span class="delayed">:'(</span></h1>
+    </footer>
 </section>
 
 <section title="Lets find a library">
@@ -129,7 +135,6 @@
 	        <li class="delayed">Micro library</li>
 	        <li class="delayed">Roll your own</li>
 	    </ul>
-	    <p class="delayed">Lets have a look...</p>
 	</section>
 
     <section class="slide">
@@ -153,7 +158,6 @@
             <li class="good delayed">Math is well documented</li>
             <li class="bad delayed">Architecture is difficult</li>
         </ul>
-        <p class="delayed">Lets look at some examples</p>
     </section>
 
     <section title="Microlib examples">
@@ -167,25 +171,25 @@
             </ul>
         </section>
 
-        <section class="slide">
+        <section class="slide conversion">
             <h2>Conversion methods</h2>
             <ul class="delayed">
-                <li>fromHexToRGB()</li>
-                <li>fromRGBToHex()</li>
+                <li><code>fromHexToRGB()</code></li>
+                <li><code>fromRGBToHex()</code></li>
             </ul>
             <ul class="delayed">
-                <li>fromHexToHSV()</li>
-                <li>fromRGBToHSV()</li>
-                <li>fromHSVToHex()</li>
-                <li>fromHSVToRGB()</li>
+                <li><code>fromHexToHSV()</code></li>
+                <li><code>fromRGBToHSV()</code></li>
+                <li><code>fromHSVToHex()</code></li>
+                <li><code>fromHSVToRGB()</code></li>
             </ul>
             <ul class="delayed">
-                <li>fromHexToHSL()</li>
-                <li>fromRGBToHSL()</li>
-                <li>fromHSVToHSL()</li>
-                <li>fromHSLToHex()</li>
-                <li>fromHSLToRGB()</li>
-                <li>fromHSLToHSV()</li>
+                <li><code>fromHexToHSL()</code></li>
+                <li><code>fromRGBToHSL()</code></li>
+                <li><code>fromHSVToHSL()</code></li>
+                <li><code>fromHSLToHex()</code></li>
+                <li><code>fromHSLToRGB()</code></li>
+                <li><code>fromHSLToHSV()</code></li>
             </ul>
             <img class="delayed" id="conversion" src="images/PullingHair.png">
             <ul class="presenter-notes">
@@ -193,7 +197,7 @@
                 <li>Lets add HSV</li>
                 <li>Now HSL... You see where this is going</li>
                 <li>Lots of methods, lots of bytes, lots of mental maintenance</li>
-            </p>
+            </ul>
         </section>
 
         <section class="slide">
@@ -217,14 +221,13 @@
                 <li>Value: [0;100]</li>
                 <li>Lightness: [0;100]</li>
             </ul>
-            <ul class="delayed">
-                <li>Cyan: [0;100]</li>
-                <li>Magenta: [0;100]</li>
-                <li>Yellow: [0;100]</li>
-                <li>blacK: [0;100]</li>
-            </ul>
             <p class="delayed">Color math: [0;1]</p>
-            <p class="presenter-notes">Every color space have channels in different ranges externally, but internally they convert to color math</p>
+            <ul class="presenter-notes">
+                <li>RGB: Integers</li>
+                <li>HSL/HSVL: Floating point? Browsers don't get it</li>
+                <li>Math: Infinetly precise → Aproximate by using floating point</li>
+                <li>Other libs only think one conversion at a time</li>
+            </ul>
         </section>
 
         <section class="slide">
@@ -252,7 +255,7 @@
             <li class="good">Chainable modifiers</li>
             <li class="good">SMALL!</li>
         </ul>
-        <ul>
+        <ul class="nofade">
             <li class="good delayed">Parse once</li>
             <li class="good delayed">Round once</li>
             <li class="good delayed">Avoid loss of precision</li>
@@ -353,6 +356,8 @@
         <ul>
             <li class="delayed">File size: <a href="https://raw.github.com/One-com/one-color/master/one-color.js">5.4k minified, </a></li>
             <li class="delayed">License: <a href="https://raw.github.com/One-com/one-color/master/LICENSE">3 clause BSD</a></li>
+            <li class="delayed">Works in any browser</li>
+            <li class="delayed">Works in NodeJS</li>
             <li class="delayed">Github: <a href="https://github.com/One-com/one-color">https://github.com/One-com/one-color</a></li>
         </ul>
     </section>
@@ -362,7 +367,7 @@
     <header class="slide">
         <h1>DEMOTIME!</h1>
     </header>
-    
+
     <section class="slide">
         <iframe src="../3rdparty/colorcat/index.html"></iframe>
     </section>
@@ -382,6 +387,7 @@
         <li>Email: <a href="mailto:munter@fumle.dk">munter@fumle.dk</a></li>
         <li>Twitter: <a href="http://twitter.com/#!/_munter_">@_munter_</a></li>
     </ul>
+    <p>Colorcat: <a href="https://github.com/Munter/colorcat">https://github.com/Munter/colorcat</a></p>
 </footer>
 
 <script src="../3rdparty/CSSS/slideshow.js"></script>

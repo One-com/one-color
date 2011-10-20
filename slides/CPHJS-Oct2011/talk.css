@@ -3,6 +3,10 @@ html {
 	background-size: cover;
 }
 
+h2 {
+    text-align: center;
+}
+
 code {
     white-space: pre;
 }
@@ -16,6 +20,18 @@ pre .delayed.displayed,
 pre.delayed.displayed,
 .delayed-children > .displayed {
     opacity: 1;
+
+}
+
+section > footer.slide > h1 {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin-top: -.6em;
+    font-size: 400%;
+    line-height: 1;
+    text-align: center;
 }
 
 #intro h1 {
@@ -69,7 +85,14 @@ pre.delayed.displayed,
 }
 
 /* Conversion methods slide */
-#conversion {
+.conversion ul.delayed {
+    float: left;
+    width: 33.33%;
+}
+.conversion > ul > li::before {
+    content: '';
+}
+.conversion img {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -77,9 +100,10 @@ pre.delayed.displayed,
     margin-top: -220px;
 }
 
-#reps ul {
+#reps ul.delayed {
     float: left;
-    width: 33.33%;
+    width: 33%;
+    margin-left: 11%;
 }
 #reps > ul > li::before {
     content: '';
