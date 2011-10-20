@@ -17,7 +17,7 @@
 	    <h2>JS colors made easy</h2>
 	    <p class="attribution">Peter Müller, Web developer @onecom</p>
     </header>
-    
+
 	<header class="slide">
 		<h1>Introduction</h1>
 		<ul class="presenter-notes">
@@ -120,7 +120,7 @@
             <li class="good delayed">SMALL!</li>
         </ul>
     </section>
-    
+
 	<section class="slide">
 	    <h2>Options</h2>
 	    <ul>
@@ -130,7 +130,7 @@
 	    </ul>
 	    <p class="delayed">Lets have a look...</p>
 	</section>
-    
+
     <section class="slide">
         <h2>Ext JS</h2>
         <img class="delayed" src="images/ExtJS.png">
@@ -143,7 +143,7 @@
             <li class="bad">Color conversion</li>
         </ul>
     </section>
-    
+
     <section class="slide">
         <h2>Micro library</h2>
         <ul>
@@ -154,7 +154,7 @@
         </ul>
         <p class="delayed">Lets look at some examples</p>
     </section>
-    
+
     <section title="Microlib examples">
         <section class="slide">
             <h2>Lack of data model</h2>
@@ -165,7 +165,7 @@
                 <li class="good delayed"><code>{ space: 'rgb', R: <span style="color: #FAA">0</span>, G: <span style="color: #AFA">0</span>, B: <span style="color: #AAF">0</span> }</code></li>
             </ul>
         </section>
-        
+
         <section class="slide">
             <h2>Conversion methods</h2>
             <ul class="delayed">
@@ -194,7 +194,7 @@
                 <li>Lots of methods, lots of bytes, lots of mental maintenance</li>
             </p>
         </section>
-        
+
         <section class="slide">
             <h2>Chained modifiers</h2>
             <ul>
@@ -202,7 +202,7 @@
                 <li class="delayed">Object with channel modifier methods</li>
             </ul>
         </section>
-        
+
         <section class="slide" id="reps">
             <h2>Color representation</h2>
             <ul class="delayed">
@@ -225,7 +225,7 @@
             <p class="delayed">Color math: [0;1]</p>
             <p class="presenter-notes">Every color space have channels in different ranges externally, but internally they convert to color math</p>
         </section>
-        
+
         <section class="slide">
             <h2>And the winner is...</h2>
             <ul>
@@ -260,31 +260,99 @@
 
     <section class="slide">
         <h2>Base</h2>
-        <pre>one = { // General One.com namespace
-    <span class="delayed">color = function( String | Array | one.color.* | Number ), // Parser</span>
-    <span class="delayed">installColorSpace: function ( str space, str channel+, obj methods )</span>
+        <pre>one = { <span class="comment">// General namespace for One.com libs</span>
+    <span class="delayed">color = function( <span class="delayed">one.color.*</span> <span class="delayed">| Array</span> <span class="delayed">| String</span> <span class="delayed">| Int</span> ), <span class="comment">// Parser</span></span>
+    <span class="delayed">installColorSpace: function ( <span class="delayed">str space</span><span class="delayed">, [str channelNames]</span><span class="delayed">, obj methods</span> )</span>
 };
 <span class="delayed">one.installColorSpace("RGB", "<span style="color: #FAA">Red</span>", "<span style="color: #AFA">Green</span>", "<span style="color: #AAF">Blue</span>", "Alpha", {...});</pre>
-        <pre class="delayed">one.color.RGB  = function ( <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1] )</pre>
-        <pre class="delayed">one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
-        <pre class="delayed">one.color.HSL  = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
-        <pre class="delayed">one.color.CMYK = function ( [0;1], [0;1], [0;1], [0;1] )</pre>
+        <pre class="delayed">one.color.RGB  = function ( <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1] ) <span class="comment">// Constructor</span></pre>
+        <p class="delayed">And with plugins:</p>
+        <pre class="delayed">one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] ) <span class="comment">// Constructor</span></pre>
+        <pre class="delayed">one.color.HSL  = function ( [0;1], [0;1], [0;1], [0;1] ) <span class="comment">// Constructor</span></pre>
+        <pre class="delayed">one.color.CMYK = function ( [0;1], [0;1], [0;1], [0;1] ) <span class="comment">// Constructor</span></pre>
     <ul class="presenter-notes">
-        <li>String: HEX, RGB, HSL, HSV</li>
-        <li>Array: [ space, channels... ]
-        <li>Number: IE has some weird integer thing going on</li>
+        <li>This is the new API</li>
+        <li>Array: toJSON and back!</li>
+        <li>String: Hex, RGB, HSL, HSV</li>
+        <li>Notice the normalization to [0;1]</li>
     </section>
 
     <section class="slide">
-        <h2></h2>
+        <h2>installColorSpace</h2>
+        <p>Metaprogramming FTW!</p>
+        <p class="delayed">Methods added to all installed one.color.* prototypes:</p>
+        <ul class="nofade">
+            <li class="delayed"><code>toString()                  → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]"</code></li>
+            <li class="delayed"><code>toJSON()                    → ["RGB", 0, 0, 0, 1]</code></li>
+            <li class="delayed"><code>equals(otherColor, epsilon) → Boolean</code></li>
+            <li class="delayed"><code>[colorSpace]                → one.color[colorSpace]</code></li>
+            <li class="delayed"><code>[channelName]               → Number [0;1]</code></li>
+            <li class="delayed"><code>[channelName](n)            → new one.color[colorSpace] with channelName set to n</code></li>
+            <li class="delayed"><code>[channelName](±n, true)     → new one.color[colorSpace] with channelName adjusted by ±n</code></li>
+        </ul>
     </section>
 
     <section class="slide">
-        <h2></h2>
+        <h2>installColorSpace</h2>
+        <p>How to write a colorSpace plugin</p>
+        <pre>one.color.installColorSpace('<span class="delayed">HSV</span>', [<span class="delayed">'Hue'</span><span class="delayed">, 'Saturation'</span><span class="delayed">, 'Value'</span><span class="delayed">, 'Alpha'</span>], {
+    <span class="delayed">fromRGB: function () { // Becomes one.color.RGB.prototype.toHSV
+        <span class="comment">// SNIP! Colormath is boring, lets go shopping!</span>
+        return new one.color.HSV(h, s, v, this.alpha);
+    },</span>
+
+    <span class="delayed">toRGB: function () {
+        <span class="comment">// SNIP! Colormath... Go read wikipedia</span>
+        return new one.color.RGB(r, g, b, this.alpha);
+    },</span>
+
+    <span class="delayed">toHSL: function () {
+        <span class="comment">// SNIP! Colormath... Just copy/paste from someone else</span>
+        return new one.color.HSL(this.h, s, l / 2, this.alpha);
+    }</span>
+});</pre>
     </section>
 
     <section class="slide">
-        <h2></h2>
+        <h2>API usage</h2>
+        <p>Color space conversions</p>
+        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">.
+    hsv()</span><span class="delayed">.
+    hsl()</span><span class="delayed">.
+    cmyk()</span><span class="delayed">.
+    toHex();</span><span class="delayed"> → "<span style="color: #99FFFF">#99FFFF</span>"</span></pre>
+        <p class="delayed">Conversions are implicit, why bother...</p>
+    </section>
+
+    <section class="slide">
+        <h2>API usage</h2>
+        <p>Channel manipulation methods</p>
+        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">.
+    red(0.5)</span><span class="delayed">.
+    hue(-0.2, true)</span><span class="delayed">.
+    magenta(0)</span><span class="delayed">.
+    toHex();</span><span class="delayed"> → "<span style="color: #99ff80">#99ff80</span>"</span></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Future possibilities</h2>
+        <ul>
+            <li class="delayed">Text contrast method</li>
+            <li class="delayed">Intuitive adjustment methods</li>
+            <li class="delayed">Photoshop blending modes</li>
+            <li class="delayed">To/from canvas array</li>
+            <li class="delayed">Color picker components</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>FAQ</h2>
+        <p>Based on the rewritten API version on the 'newapi' branch</p>
+        <ul>
+            <li class="delayed">File size: <a href="https://raw.github.com/One-com/one-color/master/one-color.js">5.4k minified, </a></li>
+            <li class="delayed">License: <a href="https://raw.github.com/One-com/one-color/master/LICENSE">3 clause BSD</a></li>
+            <li class="delayed">Github: <a href="https://github.com/One-com/one-color">https://github.com/One-com/one-color</a></li>
+        </ul>
     </section>
 </section>
 
@@ -294,20 +362,20 @@
     </header>
 </section>
 
-<footer>
-    <section class="slide" title="Questions">
-        <h2>Questions?</h2>
-    </section>
+<section>
+    <header class="slide">
+        <h1>Questions?</h1>
+    </header>
+</section>
 
-    <section class="slide" title="The End">
-	    <h2>Thank you!</h2>
-	    <p>Get it at <a href="https://github.com/One-com/one-color">https://github.com/One-com/one-color</a></p>
-        <p>Get in touch:</p>
-        <ul>
-            <li>Email: <a href="mailto:munter@fumle.dk">munter@fumle.dk</a></li>
-            <li>Twitter: <a href="http://twitter.com/#!/_munter_">@_munter_</a></li>
-        </ul>
-	</section>
+<footer class="slide">
+    <h2>Thank you!</h2>
+    <p>Get it at <a href="https://github.com/One-com/one-color">https://github.com/One-com/one-color</a></p>
+    <p>Get in touch:</p>
+    <ul>
+        <li>Email: <a href="mailto:munter@fumle.dk">munter@fumle.dk</a></li>
+        <li>Twitter: <a href="http://twitter.com/#!/_munter_">@_munter_</a></li>
+    </ul>
 </footer>
 
 <script src="../3rdparty/CSSS/slideshow.js"></script>

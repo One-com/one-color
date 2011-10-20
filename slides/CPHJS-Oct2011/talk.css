@@ -3,10 +3,15 @@ html {
 	background-size: cover;
 }
 
+code {
+    white-space: pre;
+}
+
 .delayed.displayed, .delayed-children > .displayed {
     opacity: .5;
 }
 
+.nofade .delayed.displayed,
 pre .delayed.displayed,
 pre.delayed.displayed,
 .delayed-children > .displayed {
@@ -57,6 +62,10 @@ pre.delayed.displayed,
 .slide > ul > li.bad::before {
     content: '\2717';
     color: #c12c2c;
+}
+
+.comment {
+    color: #6CC;
 }
 
 /* Conversion methods slide */
