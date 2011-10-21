@@ -11,6 +11,21 @@ code {
     white-space: pre;
 }
 
+.slide,
+.delayed,
+.delayed-children > * {
+       -webkit-transition:1s;
+       -ms-transition:1s;
+       -moz-transition:1s;
+       -o-transition:1s;
+        transition:1s;
+       -moz-transition-property: -webkit-transform, opacity, left, top, right, bottom;
+       -ms-transition-property: -webkit-transform, opacity, left, top, right, bottom;
+       -o-transition-property: -webkit-transform, opacity, left, top, right, bottom;
+       -webkit-transition-property: -webkit-transform, opacity, left, top, right, bottom;
+       transition-property: -webkit-transform, opacity, left, top, right, bottom;
+}
+
 .delayed.displayed, .delayed-children > .displayed {
     opacity: .5;
 }
