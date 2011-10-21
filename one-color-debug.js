@@ -51,44 +51,62 @@ myColor = color(myColor);
  * @return {one.color.RGB|one.color.HSL|one.color.HSV|one.color.CMYK} Color object representing the
  * parsed color, or false if the input couldn't be parsed.
  */
-one.color = function (obj) {
-    if (obj.charCodeAt) {
-        // Test for CSS rgb(....) string
-        var matchCssSyntax = obj.match(/^(rgb|hsl|hsv)a?\(\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*,\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*(?:,\s*(\.\d+|\d+(?:\.\d+))\s*)?\)/i);
+one.color = (function () {
+    var channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
+        alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
+        cssColorRegExp = new RegExp("^(rgb|hsl|hsv)a?\\(" +
+                             channelRegExp.source + "," +
+                             channelRegExp.source + "," +
+                             channelRegExp.source +
+                             "(?:," + alphaChannelRegExp.source + ")?" +
+                             "\\)$", "i");
 
-        if (matchCssSyntax) {
-            return new one.color[matchCssSyntax[1].toUpperCase()](
-                parseFloat(matchCssSyntax[2]) / (matchCssSyntax[3] ? 100 : 255),
-                parseFloat(matchCssSyntax[4]) / (matchCssSyntax[5] ? 100 : 255),
-                parseFloat(matchCssSyntax[6]) / (matchCssSyntax[7] ? 100 : 255),
-                typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8])
-            );
+    return function (obj) {
+        if (obj.charCodeAt) {
+            // Test for CSS rgb(....) string
+            var matchCssSyntax = obj.match(cssColorRegExp);
+            if (matchCssSyntax) {
+                var colorSpaceName = matchCssSyntax[1].toUpperCase(),
+                    alpha = typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8]),
+                    hasHue = colorSpaceName[0] === 'H',
+                    firstChannelDivisor = matchCssSyntax[3] ? 100 : (hasHue ? 360 : 255),
+                    secondChannelDivisor = (matchCssSyntax[5] || hasHue) ? 100 : 255,
+                    thirdChannelDivisor = (matchCssSyntax[7] || hasHue) ? 100 : 255;
+                if (!(colorSpaceName in one.color)) {
+                    throw new Error("one.color." + colorSpaceName + " is not installed.");
+                }
+                return new one.color[colorSpaceName](
+                    parseFloat(matchCssSyntax[2]) / firstChannelDivisor,
+                    parseFloat(matchCssSyntax[4]) / secondChannelDivisor,
+                    parseFloat(matchCssSyntax[6]) / thirdChannelDivisor,
+                    alpha
+                );
+            }
+            // Assume hex syntax
+            if (obj.length < 6) {
+                // Allow CSS shorthand
+                obj = obj.replace(/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i, '$1$1$2$2$3$3');
+            }
+            // Split obj into red, green, and blue components
+            var hexMatch = obj.match(/^#?([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$/i);
+            if (hexMatch) {
+                return new one.color.RGB(
+                    parseInt(hexMatch[1], 16) / 255,
+                    parseInt(hexMatch[2], 16) / 255,
+                    parseInt(hexMatch[3], 16) / 255
+                );
+            }
+        } else if (typeof obj === 'object' && obj.isColor) {
+            return obj;
+        } else if (Object.prototype.toString.apply(obj) === '[object Array]') {
+            return new one.color[obj[0]](obj.slice(1, obj.length));
+        } else if (!isNaN(obj)) {
+            // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
+            return new one.color.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
         }
-        // Assume hex syntax
-        if (obj.length < 6) {
-            // Allow CSS shorthand
-            obj = obj.replace(/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i, '$1$1$2$2$3$3');
-        }
-        // Split obj into red, green, and blue components
-        var hexMatch = obj.match(/^#?([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$/i);
-        if (hexMatch) {
-            return new one.color.RGB(
-                parseInt(hexMatch[1], 16) / 255,
-                parseInt(hexMatch[2], 16) / 255,
-                parseInt(hexMatch[3], 16) / 255
-            );
-        }
-    } else if (typeof obj === 'object' && obj.isColor) {
-        return obj;
-    } else if (Object.prototype.toString.apply(obj) === '[object Array]') {
-        return new one.color[obj[0]](obj.slice(1, obj.length));
-    } else if (!isNaN(obj)) {
-        // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
-        return new one.color.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
-    }
-    return false;
-};
-
+        return false;
+    };
+}());
 /*jslint evil:true*/
 
 one.color.installedColorSpaces = [];
@@ -733,188 +751,8 @@ one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], 
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
 
-/*global one*/
-
-/**
- * @name one.color.CMYK
- * @class
- * <p>A color in the CMYK colorspace, with an optional alpha value.</p>
- * <p>one.color.(RGB|HSL|HSV|CMYK) objects are designed to be
- * immutable; all the conversion, set, and adjust methods return new
- * objects.</p>
- * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
- * and adjust methods from all other installed colorspaces, so
- * although you can use the explicit conversion methods ({@link one.color.CMYK#rgb},
- * {@link one.color.CMYK#hsl}...), the below
- * will work just fine:</p><pre><code>
-
-new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
-    blue(.2). // Implicit conversion to RGB (with alpha)
-    hue(-.1, true). // Implicit conversion to HSL(/HSV) (with alpha)
-    cssa(); // "rgba(20,13,0,0.2)"
-</code></pre>
- * @static
- *
- * @constructor
- * Create a new one.color.CMYK object. Component values outside the
- * supported range, [0..1], will be adjusted automatically.
- * @param {Number} cyan The cyan component, range: [0..1]
- * @param {Number} magenta The magenta component, range: [0..1]
- * @param {Number} yellow The yellow component, range: [0..1]
- * @param {Number} black The black component, range: [0..1]
- * @param {Number} [alpha] The alpha value, range: [0..1],
- * defaults to 1
- */
-
-/**
- * @name one.color.CMYK.prototype.cyan
- * @function
- * @param {Number} [cyan] The new cyan component, range: [0..1]. If
- * not provided, the current value will be returned.
- * @param {Boolean} [isDelta] Whether the new value is relative to the
- * old value of the property. If the resulting value falls outside the
- * supported range, [0..1], it will be adjusted automatically.
- * @return {Number|one.color.CMYK} The current value of the property,
- * or a new color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.magenta
- * @function
- * @param {Number} [magenta] The new magenta component, range:
- * [0..1]. If not provided, the current value will be returned.
- * @param {Boolean} [isDelta] Whether the new value is relative to the
- * old value of the property. If the resulting value falls outside the
- * supported range, [0..1], it will be adjusted automatically.
- * @return {Number|one.color.CMYK} The current value of the property,
- * or a new color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.yellow
- * @function
- * @param {Number} yellow The new yellow component, range: [0..1]. If
- * not provided, the current value will be returned.
- * @param {Boolean} [isDelta] Whether the new value is relative to the
- * old value of the property. If the resulting value falls outside the
- * supported range, [0..1], it will be adjusted automatically.
- * @return {Number|one.color.CMYK} The current value of the property,
- * or a new color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.black
- * @function
- * @param {Number} black The new black component, range: [0..1]. If
- * not provided, the current value will be returned.
- * @param {Boolean} [isDelta] Whether the new value is relative to the
- * old value of the property. If the resulting value falls outside the
- * supported range, [0..1], it will be adjusted automatically.
- * @return {Number|one.color.CMYK} The current value of the property,
- * or a new color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.alpha
- * @function
- * @param {Number} alpha The new alpha value, range: [0..1]. If not
- * provided, the current value will be returned.
- * @param {Boolean} [isDelta] Whether the new value is relative to the
- * old value of the property. If the resulting value falls outside the
- * supported range, [0..1], it will be adjusted automatically.
- * @return {Number|one.color.CMYK} The current value of the property,
- * or a new color object with the changed value.
- */
-
-/**
- * @name one.color.CMYK.prototype.toJSON
- * @description Convert the color to a JSON representation.
- * @function
- * @return {Array}
- */
-
-/**
- * @name one.color.CMYK.prototype.rgb
- * @description Convert the color to a {@link one.color.RGB} object.
- * @function
- * @return {one.color.RGB}
- */
-
-/**
- * @name one.color.CMYK.prototype.hsv
- * @description Convert the color to a {@link one.color.HSV} object.
- * @function
- * @requires one.color.HSV
- * @return {one.color.HSV}
- */
-
-/**
- * @name one.color.CMYK.prototype.hsl
- * @description Convert the color to a {@link one.color.HSL} object.
- * @function
- * @requires one.color.HSL
- * @return {one.color.HSL}
- */
-
-/**
- * @name one.color.CMYK.prototype.cmyk
- * @description Convert the color to a {@link one.color.CMYK} object, ie. return the object itself.
- * @function
- * @return {one.color.CMYK}
- */
-
-/**
- * @name one.color.CMYK.prototype.hex
- * @description Get the standard RGB hex representation of the color.
- * @function
- * @return {String} The hex string, e.g. "#f681df"
- */
-
-/**
- * @name one.color.CMYK.prototype.css
- * @description Get a valid CSS color representation of the color without an alpha value.
- * @function
- * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
- */
-
-/**
- * @name one.color.CMYK.prototype.cssa
- * @description Get a valid CSS color representation of the color, including the alpha value.
- * @function
- * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
- */
-
-one.color.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
-    rgb: function () {
-        return new one.color.RGB((1 - this._cyan * (1 - this._black) - this._black),
-                                 (1 - this._magenta * (1 - this._black) - this._black),
-                                 (1 - this._yellow * (1 - this._black) - this._black),
-                                 this._alpha);
-    },
-
-    fromRgb: function () { // Becomes one.color.RGB.prototype.cmyk
-        // Adapted from http://www.javascripter.net/faq/rgb2cmyk.htm
-        var red = this._red,
-            green = this._green,
-            blue = this._blue,
-            cyan = 1 - red,
-            magenta = 1 - green,
-            yellow = 1 - blue,
-            black = 1;
-        if (red || green || blue) {
-            black = Math.min(cyan, Math.min(magenta, yellow));
-            cyan = (cyan - black) / (1 - black);
-            magenta = (magenta - black) / (1 - black);
-            yellow = (yellow - black) / (1 - black);
-        } else {
-            black = 1;
-        }
-        return new one.color.CMYK(cyan, magenta, yellow, black, this._alpha);
-    }
-});
-
 // This file is purely for the build system
-
+//
 if (module) {
 	module.exports = one.color;
 }
