@@ -8,6 +8,8 @@
 	<link href="../3rdparty/CSSS/slideshow.css" rel="stylesheet" />
 	<link href="../3rdparty/CSSS/theme.css" rel="stylesheet" />
 	<link href="talk.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="colorcat/css/demo.css">
+    <link type="text/css" rel="stylesheet" href="colorcat/css/colorcat.css">
 </head>
 <body data-duration="30">
 
@@ -371,8 +373,164 @@
         <h1>DEMOTIME!</h1>
     </header>
 
-    <section class="slide">
-        <iframe src="../3rdparty/colorcat/index.html"></iframe>
+    <section class="slide colorcat">
+        <div id="colorCat">
+            <div id="mainContainer">
+                <div id="nyanCat">
+                    <div id="wholeHead">
+                        <div class="skin ear"></div>
+                        <div class="skin ear rightEar"></div>
+                        <div id="mainHead" class="skin">
+                            <div class="eye"></div>
+                            <div class="eye rightEye"></div>
+                            <div class="nose"></div>
+                            <div class="chick"></div>
+                            <div class="chick rightChick"></div>
+                            <div class="mouth">E</div>
+                        </div>
+                    </div>
+                    <div id="toastBody">
+                        <div>&nbsp;  &nbsp; &nbsp;.&nbsp;&nbsp;.&nbsp; &nbsp; &nbsp;..&nbsp;  &nbsp; &nbsp;.&nbsp;.&nbsp; &nbsp; &nbsp;&nbsp&nbsp&nbsp;..&nbsp;  &nbsp; &nbsp;.&nbsp;&nbsp;.</div>
+                    </div>
+                    <div id="wholeTail">
+                        <div class="tail skin"></div>
+                        <div class="tail middleTail skin"></div>
+                        <div class="tail backTail skin"></div>
+                    </div>
+                    <div id="allYourLegAreBelongToUs">
+                        <div class="skin leg back leftBack"></div>
+                        <div class="skin leg back"></div>
+                        <div class="skin leg front leftFront"></div>
+                        <div class="skin leg front"></div>
+                    </div>
+                    <div class="rainbow"></div>
+                    <div class="rainbow r2"></div>
+                    <div class="rainbow r3"></div>
+                    <div class="rainbow r4"></div>
+                </div>
+                <div class="star starMovement1">
+                    <div number="1"></div>
+                    <div number="2"></div>
+                    <div number="3"></div>
+                    <div number="4"></div>
+                    <div number="5"></div>
+                    <div number="6"></div>
+                    <div number="7"></div>
+                    <div number="8"></div>
+                </div>
+                <div class="star starMovement2 backwards">
+                    <div number="1"></div>
+                    <div number="2"></div>
+                    <div number="3"></div>
+                    <div number="4"></div>
+                    <div number="5"></div>
+                    <div number="6"></div>
+                    <div number="7"></div>
+                    <div number="8"></div>
+                </div>
+                <div class="star starMovement3">
+                    <div number="1"></div>
+                    <div number="2"></div>
+                    <div number="3"></div>
+                    <div number="4"></div>
+                    <div number="5"></div>
+                    <div number="6"></div>
+                    <div number="7"></div>
+                    <div number="8"></div>
+                </div>
+               <div class="star starMovement4">
+                    <div number="1"></div>
+                    <div number="2"></div>
+                    <div number="3"></div>
+                    <div number="4"></div>
+                    <div number="5"></div>
+                    <div number="6"></div>
+                    <div number="7"></div>
+                    <div number="8"></div>
+                </div>
+                <div class="star starMovement5">
+                    <div number="1"></div>
+                    <div number="2"></div>
+                    <div number="3"></div>
+                    <div number="4"></div>
+                    <div number="5"></div>
+                    <div number="6"></div>
+                    <div number="7"></div>
+                    <div number="8"></div>
+                </div>
+            </div>
+        </div>
+        <form id="sliders">
+            <fieldset>
+                <legend>RGB</legend>
+                <p>
+                    <input name="Red" id="Red" type="range" min="-1" max="1" step="any">
+                    <label for="Red">Red</label>
+                </p>
+
+                <p>
+                    <input name="Green" id="Green" type="range" min="-1" max="1" step="any">
+                    <label for="Green">Green</label>
+                </p>
+
+                <p>
+                    <input name="Blue" id="Blue" type="range" min="-1" max="1" step="any">
+                    <label for="Blue">Blue</label>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>HSV</legend>
+                <p>
+                    <input name="Hue" id="Hue" type="range" min="-0.5" max="0.5" step="any">
+                    <label for="Hue">Hue</label>
+                </p>
+
+                <p>
+                    <input name="Saturation" id="Saturation" type="range" min="-1" max="1" step="any">
+                    <label for="Saturation">Saturation</label>
+                </p>
+
+                <p>
+                    <input name="Value" id="Value" type="range" min="-1" max="1" step="any">
+                    <label for="Value">Value</label>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>CMYK</legend>
+                <p>
+                    <input name="Cyan" id="Cyan" type="range" min="-1" max="1" step="any">
+                    <label for="Cyan">Cyan</label>
+                </p>
+
+                <p>
+                    <input name="Magenta" id="Magenta" type="range" min="-1" max="1" step="any">
+                    <label for="Magenta">Magenta</label>
+                </p>
+
+                <p>
+                    <input name="Yellow" id="Yellow" type="range" min="-1" max="1" step="any">
+                    <label for="Yellow">Yellow</label>
+                </p>
+
+                <p>
+                    <input name="Black" id="Black" type="range" min="-1" max="1" step="any">
+                    <label for="Black">blacK</label>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <p>
+                    <input name="Alpha" id="Alpha" type="range" min="0" max="1" step="any" value="1">
+                    <label for="Alpha">Alpha</label>
+                </p>
+            </fieldset>
+        </form>
+        <div class="credits">
+            <p>The <a href="https://github.com/michalbe/css-nyan-cat">CSS NYAN CAT</a> was created by <a href="http://twitter.com/#!/michalbe">Michal Budzynski</a> for <a href="http://mozillalabs.com/demoparty/helsinki">Mozilla Demo Party</a> in Helsinki June 2011</p>
+            <p>Sound was disabled for the audiences/visitors pleasure...</p>
+        </div>
     </section>
 </section>
 
@@ -394,6 +552,8 @@
 </footer>
 
 <script src="../3rdparty/CSSS/slideshow.js"></script>
+<script type="text/javascript" src="colorcat/js/one-color-debug.js"></script>
+<script type="text/javascript" src="colorcat/js/colorcat.js"></script>
 <script>
 var slideshow = new SlideShow();
 </script>

@@ -1,6 +1,3 @@
 [submodule "slides/3rdparty/CSSS"]
 	path = slides/3rdparty/CSSS
 	url = https://github.com/LeaVerou/CSSS.git
-[submodule "slides/3rdparty/colorcat"]
-	path = slides/3rdparty/colorcat
-	url = git://github.com/Munter/colorcat.git

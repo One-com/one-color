@@ -1,0 +1,36 @@
+#colorCat {
+    margin: 20px auto;
+    width: 506px;
+    background: url(../images/transparent.gif);
+}
+
+.colorcat {
+    padding-bottom: 0 !important;
+}
+
+.colorcat fieldset {
+    float: left;
+    margin: 0 10px;
+    padding: 0px 20px;
+}
+
+.colorcat label {
+    text-align: right;
+    padding-right: 20px;
+}
+
+.colorcat label:after {
+    content: ':';
+}
+
+.colorcat input {
+    float: right;
+    width: 200px;
+    margin-top: 5px;
+}
+
+.colorcat .credits {
+    text-align: center;
+    clear: both;
+    padding-top: 20px;
+}
