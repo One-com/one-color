@@ -12,19 +12,19 @@ Features
 * Extensible architecture - implement your own color spaces easily
 * Chainable color manipulation
 * Seamless conversion between color spaces on demand
-* Outputs as Hex, RBG or HSV in css syntax with or without alpha channel
+* Outputs as Hex, RGB or HSV in css syntax with or without alpha channel
 
 Usage Example
 =============
 one.color.(RGB|HSL|HSV|CMYK) objects are designed to be immutable; all the conversion, set, and adjust methods return new objects.
-one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set and adjust methods from all other installed colorspaces, so although you can use the explicit conversion methods one.color.RGB.toHSL(), one.color.RGB.toCMYK():
+one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set and adjust methods from all other installed colorspaces, so although you can use the explicit conversion methods such as one.color.RGB.hsl(), one.color.RGB.cmyk():
 
 Example::
 
 	new one.color.RGB(.4, .3, .9).
-	    adjustLightness(+.2). // Implicit conversion to HSL
-	    setRed(-.1). // Implicit conversion back to RGB
-	    toHex(); // "#00a6f2"
+	    lightness(+.2, true). // Implicit conversion to HSL
+	    red(-.1). // Implicit conversion back to RGB
+	    hex(); // "#00a6f2"
 
 Documentation
 =============

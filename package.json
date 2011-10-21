@@ -25,5 +25,5 @@
 	"publishConfig": {
 		"registry": "http://registry.npmjs.org/"
 	},
-	"main": "lib/index.js"
+	"main": "one-color-debug.js"
 }
