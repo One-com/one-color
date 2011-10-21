@@ -286,16 +286,16 @@
         <p>Metaprogramming FTW!</p>
         <p class="delayed">Methods added to all installed one.color.* prototypes:</p>
         <ul class="nofade">
-            <li class="delayed"><code>toString()                  → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]"</code></li>
-            <li class="delayed"><code>hex()                       → "#<span style="color: #FAA">RR</span><span style="color: #AFA">GG</span><span style="color: #AAF">BB</span>"</code></li>
-            <li class="delayed"><code>css()                       → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>)"</code></li>
-            <li class="delayed"><code>cssa()                      → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>, [0;1])"</code></li>
-            <li class="delayed"><code>toJSON()                    → ["RGB", <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1]]</code></li>
-            <li class="delayed"><code>equals(otherColor, epsilon) → Boolean</code></li>
-            <li class="delayed"><code>[colorSpace]                → one.color[colorSpace]</code></li>
-            <li class="delayed"><code>[channelName]               → Number [0;1]</code></li>
-            <li class="delayed"><code>[channelName]([0;1])        → new one.color[colorSpace], channelName =  [0;1]</code></li>
-            <li class="delayed"><code>[channelName](±[0;1], true) → new one.color[colorSpace], channelName ±= [0;1]</code></li>
+            <li class="delayed"><code>toString()                   → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]"</code></li>
+            <li class="delayed"><code>hex()                        → "#<span style="color: #FAA">RR</span><span style="color: #AFA">GG</span><span style="color: #AAF">BB</span>"</code></li>
+            <li class="delayed"><code>css()                        → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>)"</code></li>
+            <li class="delayed"><code>cssa()                       → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>, [0;1])"</code></li>
+            <li class="delayed"><code>toJSON()                     → ["RGB", <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1]]</code></li>
+            <li class="delayed"><code>equals(otherColor, ε = 10<sup>-9</sup>) → Boolean</code></li>
+            <li class="delayed"><code>[colorSpace]                 → one.color[colorSpace]</code></li>
+            <li class="delayed"><code>[channelName]                → Number [0;1]</code></li>
+            <li class="delayed"><code>[channelName]([0;1])         → new one.color[colorSpace], channelName =  [0;1]</code></li>
+            <li class="delayed"><code>[channelName](±[0;1], true)  → new one.color[colorSpace], channelName ±= [0;1]</code></li>
         </ul>
     </section>
 
