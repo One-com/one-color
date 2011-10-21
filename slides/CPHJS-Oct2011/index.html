@@ -287,12 +287,15 @@
         <p class="delayed">Methods added to all installed one.color.* prototypes:</p>
         <ul class="nofade">
             <li class="delayed"><code>toString()                  → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]"</code></li>
-            <li class="delayed"><code>toJSON()                    → ["RGB", 0, 0, 0, 1]</code></li>
+            <li class="delayed"><code>hex()                       → "#<span style="color: #FAA">RR</span><span style="color: #AFA">GG</span><span style="color: #AAF">BB</span>"</code></li>
+            <li class="delayed"><code>css()                       → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>)"</code></li>
+            <li class="delayed"><code>cssa()                      → "rgb(<span style="color: #FAA">[0;255]</span>, <span style="color: #AFA">[0;255]</span>, <span style="color: #AAF">[0;255]</span>, [0;1])"</code></li>
+            <li class="delayed"><code>toJSON()                    → ["RGB", <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1]]</code></li>
             <li class="delayed"><code>equals(otherColor, epsilon) → Boolean</code></li>
             <li class="delayed"><code>[colorSpace]                → one.color[colorSpace]</code></li>
             <li class="delayed"><code>[channelName]               → Number [0;1]</code></li>
-            <li class="delayed"><code>[channelName](n)            → new one.color[colorSpace] with channelName set to n</code></li>
-            <li class="delayed"><code>[channelName](±n, true)     → new one.color[colorSpace] with channelName adjusted by ±n</code></li>
+            <li class="delayed"><code>[channelName]([0;1])        → new one.color[colorSpace], channelName =  [0;1]</code></li>
+            <li class="delayed"><code>[channelName](±[0;1], true) → new one.color[colorSpace], channelName ±= [0;1]</code></li>
         </ul>
     </section>
 
@@ -300,19 +303,19 @@
         <h2>installColorSpace</h2>
         <p>How to write a colorSpace plugin</p>
         <pre>one.color.installColorSpace('<span class="delayed">HSV</span>', [<span class="delayed">'Hue'</span><span class="delayed">, 'Saturation'</span><span class="delayed">, 'Value'</span><span class="delayed">, 'Alpha'</span>], {
-    <span class="delayed">fromRGB: function () { // Becomes one.color.RGB.prototype.toHSV
+    <span class="delayed">fromRgb: function () { // Becomes one.color.RGB.prototype.toHSV
         <span class="comment">// SNIP! Colormath is boring, lets go shopping!</span>
         return new one.color.HSV(h, s, v, this.alpha);
     },</span>
 
-    <span class="delayed">toRGB: function () {
+    <span class="delayed">rgb: function () {
         <span class="comment">// SNIP! Colormath... Go read wikipedia</span>
         return new one.color.RGB(r, g, b, this.alpha);
     },</span>
 
-    <span class="delayed">toHSL: function () {
+    <span class="delayed">hsl: function () {
         <span class="comment">// SNIP! Colormath... Just copy/paste from someone else</span>
-        return new one.color.HSL(this.h, s, l / 2, this.alpha);
+        return new one.color.HSL(this.h, s, l, this.alpha);
     }</span>
 });</pre>
     </section>
@@ -320,22 +323,22 @@
     <section class="slide">
         <h2>API usage</h2>
         <p>Color space conversions</p>
-        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">.
-    hsv()</span><span class="delayed">.
-    hsl()</span><span class="delayed">.
-    cmyk()</span><span class="delayed">.
-    toHex();</span><span class="delayed"> → "<span style="color: #99FFFF">#99FFFF</span>"</span></pre>
+        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">
+    .hsv()</span><span class="delayed">
+    .hsl()</span><span class="delayed">
+    .cmyk()</span><span class="delayed">
+    .hex();</span><span class="delayed"> → "<span style="color: #99FFFF">#99FFFF</span>"</span></pre>
         <p class="delayed">Conversions are implicit, why bother...</p>
     </section>
 
     <section class="slide">
         <h2>API usage</h2>
         <p>Channel manipulation methods</p>
-        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">.
-    red(0.5)</span><span class="delayed">.
-    hue(-0.2, true)</span><span class="delayed">.
-    magenta(0)</span><span class="delayed">.
-    toHex();</span><span class="delayed"> → "<span style="color: #99ff80">#99ff80</span>"</span></pre>
+        <pre class="delayed">one.color("<span style="color: #99FFFF">#99FFFF</span>")<span class="delayed">
+    .red(0.5)</span><span class="delayed">
+    .hue(-0.2, true)</span><span class="delayed">
+    .magenta(0)</span><span class="delayed">
+    .hex();</span><span class="delayed"> → "<span style="color: #99ff80">#99ff80</span>"</span></pre>
     </section>
 
     <section class="slide">
