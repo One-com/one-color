@@ -28,6 +28,32 @@ Example::
 
 Documentation
 =============
+
+Base class overview::
+
+	one = { // General namespace for One.com libs
+	    color = function( one.color.* | Array | String | Int ), // Parser
+	    installColorSpace: function ( str space, [str channelNames], obj methods )
+	};
+	one.color.RGB  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
+	one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
+	one.color.HSL  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
+	one.color.CMYK = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
+
+Methods on an instance of one.color.( RGB | HSL | HSV | CMYK)::
+
+	toString()                   → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]" // For debugging
+	hex()                        → "#RRGGBB"
+	css()                        → "rgb([0;255], [0;255], [0;255])"
+	cssa()                       → "rgb([0;255], [0;255], [0;255], [0;1])"
+	toJSON()                     → ["RGB", [0;1], [0;1], [0;1], [0;1]] // As understood by one.color(Array)
+	equals(otherColor, e = 10-9) → Boolean
+	[colorSpace]                 → one.color[colorSpace] // Conversion method
+	[channelName]                → Number [0;1] // Get, implicit color space conversion
+	[channelName]([0;1])         → new one.color[colorSpace], channelName =  [0;1] // Set, implicit color space conversion
+	[channelName](±[0;1], true)  → new one.color[colorSpace], channelName ±= [0;1] // Adjust, implicit color space conversion
+
+
 The API is documented in the source code and can be built using `JSDoc <http://code.google.com/p/jsdoc-toolkit/>`_.
 
 Building
