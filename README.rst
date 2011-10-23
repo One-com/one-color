@@ -48,8 +48,8 @@ Methods on an instance of one.color.( RGB | HSL | HSV | CMYK)::
 	cssa()                        → "rgb([0;255], [0;255], [0;255], [0;1])"
 	toJSON()                      → ["RGB", [0;1], [0;1], [0;1], [0;1]] // As understood by one.color(Array)
 	equals(otherColor, ε = 10^-9) → Boolean
-	[colorSpace]                  → one.color[colorSpace] // Conversion method
-	[channelName]                 → Number [0;1] // Get, implicit color space conversion
+	[colorSpace]()                → one.color[colorSpace] // Conversion method
+	[channelName]()               → Number [0;1] // Get, implicit color space conversion
 	[channelName]([0;1])          → new one.color[colorSpace], channelName =  [0;1] // Set, implicit color space conversion
 	[channelName](±[0;1], true)   → new one.color[colorSpace], channelName ±= [0;1] // Adjust, implicit color space conversion
 
