@@ -266,11 +266,11 @@
 
     <section class="slide">
         <h2>Base</h2>
-        <pre>one = { <span class="comment">// General namespace for One.com libs</span>
+        <pre>one.color = { <span class="comment">// General namespace for One.com libs</span>
     <span class="delayed">color = function( <span class="delayed">one.color.*</span> <span class="delayed">| Array</span> <span class="delayed">| String</span> <span class="delayed">| Int</span> ), <span class="comment">// Parser</span></span>
-    <span class="delayed">installColorSpace: function ( <span class="delayed">str space</span><span class="delayed">, [str channelNames]</span><span class="delayed">, obj methods</span> )</span>
 };
-<span class="delayed">one.installColorSpace("RGB", "<span style="color: #FAA">Red</span>", "<span style="color: #AFA">Green</span>", "<span style="color: #AAF">Blue</span>", "Alpha", {...});</pre>
+<span class="delayed">one.color.installColorSpace: function ( <span class="delayed">str space</span><span class="delayed">, [str channelNames]</span><span class="delayed">, obj methods</span> )</span>
+<span class="delayed">one.color.installColorSpace("RGB", "<span style="color: #FAA">Red</span>", "<span style="color: #AFA">Green</span>", "<span style="color: #AAF">Blue</span>", "Alpha", {...});</pre>
         <pre class="delayed">one.color.RGB  = function ( <span style="color: #FAA">[0;1]</span>, <span style="color: #AFA">[0;1]</span>, <span style="color: #AAF">[0;1]</span>, [0;1] ) <span class="comment">// Constructor</span></pre>
         <p class="delayed">And with plugins:</p>
         <pre class="delayed">one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] ) <span class="comment">// Constructor</span></pre>

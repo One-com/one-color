@@ -31,16 +31,14 @@ Documentation
 
 Base class overview::
 
-	one = { // General namespace for One.com libs
-	    color = function( one.color.* | Array | String | Int ), // Parser
-	    installColorSpace: function ( str space, [str channelNames], obj methods )
-	};
+	one.color = function( one.color.* | Array | String | Int ), // Parser
+	one.color.installColorSpace: function ( str space, [str channelNames], obj methods )
 	one.color.RGB  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
 	one.color.HSV  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
 	one.color.HSL  = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
 	one.color.CMYK = function ( [0;1], [0;1], [0;1], [0;1] ); // Constructor
 
-Methods on an instance of one.color.( RGB | HSL | HSV | CMYK)::
+Methods on an instance of one.color.( RGB | HSL | HSV | CMYK )::
 
 	toString()                    → "[one.color.RGB: Red=0 Green=0 Blue=0 Alpha=1]" // For debugging
 	hex()                         → "#RRGGBB"
