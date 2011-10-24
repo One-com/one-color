@@ -62,8 +62,8 @@ The Makefile uses `AssetGraph <https://github.com/One-com/assetgraph>`_ for reso
 
 If you aren't up for a complete installation, take a look at the pre-built packages:
 
-* `one-color.js <one-color.js>`_
-* `one-color-debug.js <one-color-debug.js>`_
+* `one-color.js <one-color/one-color.js>`_
+* `one-color-debug.js <one-color/one-color-debug.js>`_
 
 License
 ========
