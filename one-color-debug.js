@@ -12,23 +12,6 @@ if (typeof window !== 'undefined') {
 
 one.include = one.exclude = function () {}; // Ignore these in development mode
 
-(function () {
-    /** @exports stringPrototype as String.prototype*/
-    var stringPrototype = String.prototype;
-
-    /**
-     * <p>Returns this string with the char at first position in uppercase.</p>
-     * <p>Example of use:</p><pre><code>
-    "the brown Fox jumped over the lazy Dog".capitalize(); // = "The brown Fox jumped over the lazy Dog"
-    </code></pre>
-     * @return capitalized string.
-     * @memberOf String.prototype
-     */
-    stringPrototype.capitalize = function () {
-        return this.charAt(0).toUpperCase() + this.substring(1);
-    };
-}());
-
 /*global one*/
 
 /**
@@ -152,7 +135,7 @@ one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
         otherColor = otherColor[colorSpaceName.toLowerCase()]();
 
         for (var i = 0; i < propertyNames.length; i = i + 1) {
-            if (Math.abs(this['_' + propertyNames[i]] - otherColor[propertyNames[i]]) > epsilon) {
+            if (Math.abs(this['_' + propertyNames[i]] - otherColor['_' + propertyNames[i]]) > epsilon) {
                 return false;
             }
         }
@@ -210,7 +193,7 @@ one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
         var obj = {};
         obj[sourceColorSpaceName.toLowerCase()] = new Function("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
         one.color[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
-            obj[propertyName] = new Function ("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
+            obj[propertyName] = new Function("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
         });
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && one.color[targetColorSpaceName].prototype[prop] === undefined) {
