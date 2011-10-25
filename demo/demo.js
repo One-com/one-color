@@ -15,7 +15,7 @@ window.onload = function () {
                         (1 + Math.cos(date/1000)) / 3 + 0.2,
                         1,
                         (1 + Math.sin(date/1000)) / 3 + 0.5
-                    ).toCSSWithAlpha();
+                    ).cssa();
 
                 }
             }, 100);
