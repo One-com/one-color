@@ -34,8 +34,9 @@ myColor = color(myColor);
  * @return {one.color.RGB|one.color.HSL|one.color.HSV|one.color.CMYK} Color object representing the
  * parsed color, or false if the input couldn't be parsed.
  */
-one.color = (function () {
-    var channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
+(function () {
+    var installedColorSpaces = [],
+        channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
         alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
         cssColorRegExp = new RegExp("^(rgb|hsl|hsv)a?\\(" +
                              channelRegExp.source + "," +
@@ -44,7 +45,7 @@ one.color = (function () {
                              "(?:," + alphaChannelRegExp.source + ")?" +
                              "\\)$", "i");
 
-    return function (obj) {
+    one.color = function (obj) {
         if (obj.charCodeAt) {
             // Test for CSS rgb(....) string
             var matchCssSyntax = obj.match(cssColorRegExp);
@@ -89,13 +90,8 @@ one.color = (function () {
         }
         return false;
     };
-}());
+
 /*jslint evil:true*/
-
-
-(function () {
-    var installedColorSpaces = [];
-
     one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
         one.color[colorSpaceName] = new Function(propertyNames.join(","),
             // Allow passing an array to the constructor:
@@ -617,11 +613,10 @@ one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], 
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
         var saturation = this._saturation,
             lightness = this._lightness * 2;
-        if (lightness <= 1) {
-            saturation *= lightness;
-        } else {
-            saturation *= (2 - lightness);
-        }
+
+        saturation *= (lightness <= 1) ? lightness : 2 - lightness;
+
+        // FIXME: (2 * saturation) / (lightness + saturation) === NaN if this_lightness is 0
         return new one.color.HSV(this._hue, (2 * saturation) / (lightness + saturation), (lightness + saturation) / 2, this._alpha);
     },
 
@@ -742,7 +737,7 @@ one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], 
 
 // This file is purely for the build system
 //
-if (module) {
+if (typeof module !== 'undefined') {
 	module.exports = one.color;
 }
 
