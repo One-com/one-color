@@ -539,12 +539,18 @@ one.color.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
     },
 
     hsl: function () {
-        // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var saturation = this._saturation,
-            value = this._value,
-            s = saturation * value,
-            l = (2 - saturation) * value;
-        return new one.color.HSL(this._hue, s / (l <= 1 ? l : (2 - l)), l / 2, this._alpha);
+        var l = (2 - this._saturation) * this._value,
+            sv = this._saturation * this._value,
+            svDivisor = l <= 1 ? l : (2 - l),
+            saturation;
+
+        // Avoid division by zero when lightness approaches zero:
+        if (svDivisor < 1e-9) {
+            saturation = 0;
+        } else {
+            saturation = sv / svDivisor;
+        }
+        return new one.color.HSL(this._hue, saturation, l / 2, this._alpha);
     },
 
     fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
@@ -611,13 +617,18 @@ new one.color.HSL(.4, .3, .9, .9). // HSL with alpha
 one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
     hsv: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var saturation = this._saturation,
-            lightness = this._lightness * 2;
+        var l = this._lightness * 2,
+            s = this._saturation * ((l <= 1) ? l : 2 - l),
+            saturation;
 
-        saturation *= (lightness <= 1) ? lightness : 2 - lightness;
+        // Avoid division by zero when l + s is very small (approaching black):
+        if (l + s < 1e-9) {
+            saturation = 0;
+        } else {
+            saturation = (2 * s) / (l + s);
+        }
 
-        // FIXME: (2 * saturation) / (lightness + saturation) === NaN if this_lightness is 0
-        return new one.color.HSV(this._hue, (2 * saturation) / (lightness + saturation), (lightness + saturation) / 2, this._alpha);
+        return new one.color.HSV(this._hue, saturation, (l + s) / 2, this._alpha);
     },
 
     rgb: function () {
