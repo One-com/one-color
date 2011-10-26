@@ -1,29 +1,29 @@
 {
-	"name": "onecolor",
-	"description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
-	"repository": "git@github.com:One-com/one-color.git",
-	"version": "0.0.1",
-	"maintainers": [
-		{
-			"name": "Peter Müller",
-			"email": "pm@one.com"
-		},
-		{
-			"name": "Andreas Lind Petersen",
-			"email": "andreas@one.com"
-		}
-	],
-	"devDependencies": {
-		"assetgraph-builder": "= 0.2.11"
-	},
-	"engines": {
-		"node": ">=0.4.8"
-	},
-	"directories": {
-		"lib": "./lib"
-	},
-	"publishConfig": {
-		"registry": "http://registry.npmjs.org/"
-	},
-	"main": "one-color-debug.js"
+    "name": "onecolor",
+    "description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
+    "repository": "git@github.com:One-com/one-color.git",
+    "version": "0.0.1",
+    "maintainers": [
+        {
+            "name": "Peter Müller",
+            "email": "pm@one.com"
+        },
+        {
+            "name": "Andreas Lind Petersen",
+            "email": "andreas@one.com"
+        }
+    ],
+    "devDependencies": {
+        "assetgraph-builder": "= 0.2.11"
+    },
+    "engines": {
+        "node": ">=0.4.8"
+    },
+    "directories": {
+        "lib": "./lib"
+    },
+    "publishConfig": {
+        "registry": "http://registry.npmjs.org/"
+    },
+    "main": "one-color-debug.js"
 }
