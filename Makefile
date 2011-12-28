@@ -14,7 +14,7 @@ outputfiles := one-color-debug.js one-color.js
 all: $(outputfiles)
 
 one-color-debug.js: $(jsfiles)
-	flattenOneInclude lib/one/color/_all.js --label js=lib > $@
+	flattenOneInclude lib/one/color/_all.js > $@
 
 one-color.js: one-color-debug.js
 	yui-compressor --type js $< > $@
