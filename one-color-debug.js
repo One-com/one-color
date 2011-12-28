@@ -46,7 +46,15 @@ myColor = color(myColor);
                              "\\)$", "i");
 
     one.color = function (obj) {
-        if (obj.charCodeAt) {
+        if (Object.prototype.toString.apply(obj) === '[object Array]') {
+            if (obj[0].length === 4) {
+                // Assumed 4 element int RGB array from canvas with all channels [0;255]
+                return new one.color.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
+            } else {
+                // Assumed destringified array from one.color.JSON()
+                return new one.color[obj[0]](obj.slice(1, obj.length));
+            }
+        } else if (obj.charCodeAt) {
             // Test for CSS rgb(....) string
             var matchCssSyntax = obj.match(cssColorRegExp);
             if (matchCssSyntax) {
@@ -82,8 +90,6 @@ myColor = color(myColor);
             }
         } else if (typeof obj === 'object' && obj.isColor) {
             return obj;
-        } else if (Object.prototype.toString.apply(obj) === '[object Array]') {
-            return new one.color[obj[0]](obj.slice(1, obj.length));
         } else if (!isNaN(obj)) {
             // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
             return new one.color.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
