@@ -17,7 +17,7 @@ one-color-debug.js: $(jsfiles)
 	flattenOneInclude lib/one/color/_all.js > $@
 
 one-color.js: one-color-debug.js
-	yui-compressor --type js $< > $@
+	uglifyjs -nc $< > $@
 
 doc: $(jsfiles)
 	mkdir -p doc
