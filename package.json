@@ -15,7 +15,8 @@
     ],
     "devDependencies": {
         "assetgraph-builder": "= 0.2.36",
-        "uglify-js": ">=1.2.0"
+        "uglify-js": ">=1.2.0",
+        "vows": "=0.6.1"
     },
     "engines": {
         "node": ">=0.4.8"
@@ -28,6 +29,6 @@
     },
     "main": "one-color-debug.js",
     "scripts": {
-        "prepublish": "make"
+        "prepublish": "make; vows"
     }
 }
