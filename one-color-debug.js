@@ -1,16 +1,15 @@
-/*global window*/
+/*global one*/
 
 /**
  * @namespace one One.com global JavaScript namespace.
- * @exports window.one as one
+ * @exports one
  */
-if (typeof window !== 'undefined') {
-	window.one = window.one || {};
-} else {
-	var one = {};
-}
 
-one.include = one.exclude = function () {}; // Ignore these in development mode
+if (typeof one === 'undefined') {
+    one = {
+        include: function () {}
+    };
+}
 
 /*global one*/
 
@@ -34,7 +33,7 @@ myColor = color(myColor);
  * @return {one.color.RGB|one.color.HSL|one.color.HSV|one.color.CMYK} Color object representing the
  * parsed color, or false if the input couldn't be parsed.
  */
-(function () {
+(function (nameSpace, fn, parseint, parsefloat, round) {
     var installedColorSpaces = [],
         channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
         alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
@@ -45,32 +44,32 @@ myColor = color(myColor);
                              "(?:," + alphaChannelRegExp.source + ")?" +
                              "\\)$", "i");
 
-    one.color = function (obj) {
+    nameSpace = function(obj) {
         if (Object.prototype.toString.apply(obj) === '[object Array]') {
             if (obj[0].length === 4) {
                 // Assumed 4 element int RGB array from canvas with all channels [0;255]
-                return new one.color.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
+                return new nameSpace.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
             } else {
                 // Assumed destringified array from one.color.JSON()
-                return new one.color[obj[0]](obj.slice(1, obj.length));
+                return new nameSpace[obj[0]](obj.slice(1, obj.length));
             }
         } else if (obj.charCodeAt) {
             // Test for CSS rgb(....) string
             var matchCssSyntax = obj.match(cssColorRegExp);
             if (matchCssSyntax) {
                 var colorSpaceName = matchCssSyntax[1].toUpperCase(),
-                    alpha = typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8]),
+                    alpha = typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parsefloat(matchCssSyntax[8]),
                     hasHue = colorSpaceName[0] === 'H',
                     firstChannelDivisor = matchCssSyntax[3] ? 100 : (hasHue ? 360 : 255),
                     secondChannelDivisor = (matchCssSyntax[5] || hasHue) ? 100 : 255,
                     thirdChannelDivisor = (matchCssSyntax[7] || hasHue) ? 100 : 255;
-                if (!(colorSpaceName in one.color)) {
+                if (typeof nameSpace[colorSpaceName] === 'undefined') {
                     throw new Error("one.color." + colorSpaceName + " is not installed.");
                 }
-                return new one.color[colorSpaceName](
-                    parseFloat(matchCssSyntax[2]) / firstChannelDivisor,
-                    parseFloat(matchCssSyntax[4]) / secondChannelDivisor,
-                    parseFloat(matchCssSyntax[6]) / thirdChannelDivisor,
+                return new nameSpace[colorSpaceName](
+                    parsefloat(matchCssSyntax[2]) / firstChannelDivisor,
+                    parsefloat(matchCssSyntax[4]) / secondChannelDivisor,
+                    parsefloat(matchCssSyntax[6]) / thirdChannelDivisor,
                     alpha
                 );
             }
@@ -82,24 +81,24 @@ myColor = color(myColor);
             // Split obj into red, green, and blue components
             var hexMatch = obj.match(/^#?([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$/i);
             if (hexMatch) {
-                return new one.color.RGB(
-                    parseInt(hexMatch[1], 16) / 255,
-                    parseInt(hexMatch[2], 16) / 255,
-                    parseInt(hexMatch[3], 16) / 255
+                return new nameSpace.RGB(
+                    parseint(hexMatch[1], 16) / 255,
+                    parseint(hexMatch[2], 16) / 255,
+                    parseint(hexMatch[3], 16) / 255
                 );
             }
         } else if (typeof obj === 'object' && obj.isColor) {
             return obj;
         } else if (!isNaN(obj)) {
             // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
-            return new one.color.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
+            return new nameSpace.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
         }
         return false;
-    };
+    }
 
 /*jslint evil:true*/
-    one.color.installColorSpace = function (colorSpaceName, propertyNames, config) {
-        one.color[colorSpaceName] = new Function(propertyNames.join(","),
+    nameSpace.installColorSpace = function (colorSpaceName, propertyNames, config) {
+        nameSpace[colorSpaceName] = new fn(propertyNames.join(","),
             // Allow passing an array to the constructor:
             "if (Object.prototype.toString.apply(" + propertyNames[0] + ") === '[object Array]') {" +
                 propertyNames.map(function (propertyName, i) {
@@ -121,12 +120,12 @@ myColor = color(myColor);
                 }
             }).join(";") + ";"
         );
-        one.color[colorSpaceName].propertyNames = propertyNames;
+        nameSpace[colorSpaceName].propertyNames = propertyNames;
 
-        var prototype = one.color[colorSpaceName].prototype;
+        var prototype = nameSpace[colorSpaceName].prototype;
 
         ['valueOf', 'hex', 'css', 'cssa'].forEach(function (methodName) {
-            prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new Function("return this.rgb()." + methodName + "();"));
+            prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new fn("return this.rgb()." + methodName + "();"));
         });
 
         prototype.isColor = true;
@@ -147,7 +146,7 @@ myColor = color(myColor);
             return true;
         };
 
-        prototype.toJSON = new Function(
+        prototype.toJSON = new fn(
             "return ['" + colorSpaceName + "', " +
                 propertyNames.map(function (propertyName) {
                     return "this._" + propertyName;
@@ -159,7 +158,7 @@ myColor = color(myColor);
             if (config.hasOwnProperty(propertyName)) {
                 var matchFromColorSpace = propertyName.match(/^from(.*)$/);
                 if (matchFromColorSpace) {
-                    one.color[matchFromColorSpace[1].toUpperCase()].prototype[colorSpaceName.toLowerCase()] = config[propertyName];
+                    nameSpace[matchFromColorSpace[1].toUpperCase()].prototype[colorSpaceName.toLowerCase()] = config[propertyName];
                 } else {
                     prototype[propertyName] = config[propertyName];
                 }
@@ -170,13 +169,13 @@ myColor = color(myColor);
         prototype[colorSpaceName.toLowerCase()] = function () {
             return this;
         };
-        prototype.toString = new Function("return \"[one.color." + colorSpaceName + ":\"+" + propertyNames.map(function (propertyName, i) {
+        prototype.toString = new fn("return \"[one.color." + colorSpaceName + ":\"+" + propertyNames.map(function (propertyName, i) {
             return "\" " + propertyNames[i] + "=\"+this._" + propertyName;
         }).join("+") + "+\"]\";");
 
         // Generate getters and setters
         propertyNames.forEach(function (propertyName, i) {
-            prototype[propertyName] = new Function("value", "isDelta",
+            prototype[propertyName] = new fn("value", "isDelta",
                 // Simple getter mode: color.red()
                 "if (typeof value === 'undefined') {" +
                     "return this._" + propertyName + ";" +
@@ -195,13 +194,13 @@ myColor = color(myColor);
 
         function installForeignMethods(targetColorSpaceName, sourceColorSpaceName) {
             var obj = {};
-            obj[sourceColorSpaceName.toLowerCase()] = new Function("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
-            one.color[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
-                obj[propertyName] = new Function("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
+            obj[sourceColorSpaceName.toLowerCase()] = new fn("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
+            nameSpace[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
+                obj[propertyName] = new fn("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
             });
             for (var prop in obj) {
-                if (obj.hasOwnProperty(prop) && one.color[targetColorSpaceName].prototype[prop] === undefined) {
-                    one.color[targetColorSpaceName].prototype[prop] = obj[prop];
+                if (obj.hasOwnProperty(prop) && nameSpace[targetColorSpaceName].prototype[prop] === undefined) {
+                    nameSpace[targetColorSpaceName].prototype[prop] = obj[prop];
                 }
             }
         }
@@ -213,40 +212,36 @@ myColor = color(myColor);
 
         installedColorSpaces.push(colorSpaceName);
     };
-}());
 
-/**
- * @name one.color.RGB
- * @class
- * <p>A color in the RGB colorspace with an optional alpha value.</p>
- * <p>one.color.(RGB|HSL|HSV|CMYK) objects are designed to be
- * immutable; all the conversion, set, and adjust methods return new
- * objects.</p>
- * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
- * and adjust methods from all other installed colorspaces, so
- * although you can use the explicit conversion methods ({@link
- * one.color.RGB#hsl}, {@link one.color.RGB#cmyk}...), the below
- * will work just fine:</p><pre><code>
-
-new one.color.RGB(.4, .3, .9).
-    lightness(+.2, true). // Implicit conversion to HSL
-    red(-.1). // Implicit conversion back to RGB
-    hex(); // "#00a6f2"
-</code></pre>
- *
- * @constructor
- * Create a new one.color.RGB object. Values outside the supported
- * range, [0..1], will be adjusted automatically.
- * @param {Number} red The red component, range: [0..1]
- * @param {Number} green The green component, range: [0..1]
- * @param {Number} blue The blue component, range: [0..1]
- * @param {Number} [alpha] The alpha value, range: [0..1],
- * defaults to 1
- */
-(function () {
-    var round = Math.round;
-
-    one.color.installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
+    /**
+     * @name one.color.RGB
+     * @class
+     * <p>A color in the RGB colorspace with an optional alpha value.</p>
+     * <p>one.color.(RGB|HSL|HSV|CMYK) objects are designed to be
+     * immutable; all the conversion, set, and adjust methods return new
+     * objects.</p>
+     * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
+     * and adjust methods from all other installed colorspaces, so
+     * although you can use the explicit conversion methods ({@link
+     * one.color.RGB#hsl}, {@link one.color.RGB#cmyk}...), the below
+     * will work just fine:</p><pre><code>
+        
+    new one.color.RGB(.4, .3, .9).
+        lightness(+.2, true). // Implicit conversion to HSL
+        red(-.1). // Implicit conversion back to RGB
+        hex(); // "#00a6f2"
+    </code></pre>
+     *
+     * @constructor
+     * Create a new one.color.RGB object. Values outside the supported
+     * range, [0..1], will be adjusted automatically.
+     * @param {Number} red The red component, range: [0..1]
+     * @param {Number} green The green component, range: [0..1]
+     * @param {Number} blue The blue component, range: [0..1]
+     * @param {Number} [alpha] The alpha value, range: [0..1],
+     * defaults to 1
+     */
+    nameSpace.installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
         /**
          * Get the standard RGB hex representation of the color.
          * @return {String} The hex string, e.g. "#f681df"
@@ -274,7 +269,7 @@ new one.color.RGB(.4, .3, .9).
             return "rgba(" + round(255 * this._red) + "," + round(255 * this._green) + "," + round(255 * this._blue) + "," + this._alpha + ")";
         }
     });
-}());
+}(one.color, Function, parseInt, parseFloat, Math.round));
 
 /**
  * @name one.color.RGB.prototype.red
@@ -496,97 +491,99 @@ new one.color.HSV(.9, .2, .4).
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
-one.color.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
-    rgb: function () {
-        var hue = this._hue,
-            saturation = this._saturation,
-            value = this._value,
-            i = Math.min(5, Math.floor(hue * 6)),
-            f = hue * 6 - i,
-            p = value * (1 - saturation),
-            q = value * (1 - f * saturation),
-            t = value * (1 - (1 - f) * saturation),
-            red,
-            green,
-            blue;
-        switch (i) {
-        case 0:
-            red = value;
-            green = t;
-            blue = p;
-            break;
-        case 1:
-            red = q;
-            green = value;
-            blue = p;
-            break;
-        case 2:
-            red = p;
-            green = value;
-            blue = t;
-            break;
-        case 3:
-            red = p;
-            green = q;
-            blue = value;
-            break;
-        case 4:
-            red = t;
-            green = p;
-            blue = value;
-            break;
-        case 5:
-            red = value;
-            green = p;
-            blue = q;
-            break;
-        }
-        return new one.color.RGB(red, green, blue, this._alpha);
-    },
-
-    hsl: function () {
-        var l = (2 - this._saturation) * this._value,
-            sv = this._saturation * this._value,
-            svDivisor = l <= 1 ? l : (2 - l),
-            saturation;
-
-        // Avoid division by zero when lightness approaches zero:
-        if (svDivisor < 1e-9) {
-            saturation = 0;
-        } else {
-            saturation = sv / svDivisor;
-        }
-        return new one.color.HSL(this._hue, saturation, l / 2, this._alpha);
-    },
-
-    fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
-        var red = this._red,
-            green = this._green,
-            blue = this._blue,
-            max = Math.max(red, green, blue),
-            min = Math.min(red, green, blue),
-            delta = max - min,
-            hue,
-            saturation = (max === 0) ? 0 : (delta / max),
-            value = max;
-        if (delta === 0) {
-            hue = 0;
-        } else {
-            switch (max) {
-            case red:
-                hue = (green - blue) / delta / 6 + (green < blue ? 1 : 0);
+(function (nameSpace, math) {
+    nameSpace.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
+        rgb: function () {
+            var hue = this._hue,
+                saturation = this._saturation,
+                value = this._value,
+                i = math.min(5, math.floor(hue * 6)),
+                f = hue * 6 - i,
+                p = value * (1 - saturation),
+                q = value * (1 - f * saturation),
+                t = value * (1 - (1 - f) * saturation),
+                red,
+                green,
+                blue;
+            switch (i) {
+            case 0:
+                red = value;
+                green = t;
+                blue = p;
                 break;
-            case green:
-                hue = (blue - red) / delta / 6 + 1 / 3;
+            case 1:
+                red = q;
+                green = value;
+                blue = p;
                 break;
-            case blue:
-                hue = (red - green) / delta / 6 + 2 / 3;
+            case 2:
+                red = p;
+                green = value;
+                blue = t;
+                break;
+            case 3:
+                red = p;
+                green = q;
+                blue = value;
+                break;
+            case 4:
+                red = t;
+                green = p;
+                blue = value;
+                break;
+            case 5:
+                red = value;
+                green = p;
+                blue = q;
                 break;
             }
+            return new nameSpace.RGB(red, green, blue, this._alpha);
+        },
+
+        hsl: function () {
+            var l = (2 - this._saturation) * this._value,
+                sv = this._saturation * this._value,
+                svDivisor = l <= 1 ? l : (2 - l),
+                saturation;
+
+            // Avoid division by zero when lightness approaches zero:
+            if (svDivisor < 1e-9) {
+                saturation = 0;
+            } else {
+                saturation = sv / svDivisor;
+            }
+            return new nameSpace.HSL(this._hue, saturation, l / 2, this._alpha);
+        },
+
+        fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
+            var red = this._red,
+                green = this._green,
+                blue = this._blue,
+                max = math.max(red, green, blue),
+                min = math.min(red, green, blue),
+                delta = max - min,
+                hue,
+                saturation = (max === 0) ? 0 : (delta / max),
+                value = max;
+            if (delta === 0) {
+                hue = 0;
+            } else {
+                switch (max) {
+                case red:
+                    hue = (green - blue) / delta / 6 + (green < blue ? 1 : 0);
+                    break;
+                case green:
+                    hue = (blue - red) / delta / 6 + 1 / 3;
+                    break;
+                case blue:
+                    hue = (red - green) / delta / 6 + 2 / 3;
+                    break;
+                }
+            }
+            return new nameSpace.HSV(hue, saturation, value, this._alpha);
         }
-        return new one.color.HSV(hue, saturation, value, this._alpha);
-    }
-});
+    });
+}(one.color, Math));
 
 /*global one*/
 
