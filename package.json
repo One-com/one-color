@@ -3,6 +3,7 @@
     "description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
     "repository": "git@github.com:One-com/one-color.git",
     "version": "2.0.6",
+    "keywords": ["ender", "color", "colour"],
     "maintainers": [
         {
             "name": "Peter Müller",
@@ -28,6 +29,7 @@
         "registry": "http://registry.npmjs.org/"
     },
     "main": "one-color-debug.js",
+    "ender": "lib/ender.js",
     "scripts": {
         "prepublish": "make; vows"
     }
