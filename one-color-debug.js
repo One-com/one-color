@@ -33,72 +33,77 @@ myColor = color(myColor);
  * @return {one.color.RGB|one.color.HSL|one.color.HSV|one.color.CMYK} Color object representing the
  * parsed color, or false if the input couldn't be parsed.
  */
-(function (nameSpace, fn, parseint, parsefloat, round) {
-    var installedColorSpaces = [],
+(function () {
+    var FUNCTION = Function,
+        PARSEINT = parseInt,
+        PARSEFLOAT = parseFloat,
+        ROUND = Math.round,
+        installedColorSpaces = [],
         channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
         alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
-        cssColorRegExp = new RegExp("^(rgb|hsl|hsv)a?\\(" +
-                             channelRegExp.source + "," +
-                             channelRegExp.source + "," +
-                             channelRegExp.source +
-                             "(?:," + alphaChannelRegExp.source + ")?" +
-                             "\\)$", "i");
-
-    function color (obj) {
-        if (Object.prototype.toString.apply(obj) === '[object Array]') {
-            if (obj[0].length === 4) {
-                // Assumed 4 element int RGB array from canvas with all channels [0;255]
-                return new color.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
-            } else {
-                // Assumed destringified array from one.color.JSON()
-                return new color[obj[0]](obj.slice(1, obj.length));
-            }
-        } else if (obj.charCodeAt) {
-            // Test for CSS rgb(....) string
-            var matchCssSyntax = obj.match(cssColorRegExp);
-            if (matchCssSyntax) {
-                var colorSpaceName = matchCssSyntax[1].toUpperCase(),
-                    alpha = typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : parsefloat(matchCssSyntax[8]),
-                    hasHue = colorSpaceName[0] === 'H',
-                    firstChannelDivisor = matchCssSyntax[3] ? 100 : (hasHue ? 360 : 255),
-                    secondChannelDivisor = (matchCssSyntax[5] || hasHue) ? 100 : 255,
-                    thirdChannelDivisor = (matchCssSyntax[7] || hasHue) ? 100 : 255;
-                if (typeof color[colorSpaceName] === 'undefined') {
-                    throw new Error("one.color." + colorSpaceName + " is not installed.");
+        cssColorRegExp = new RegExp(
+                             "^(rgb|hsl|hsv)a?" +
+                             "\\(" +
+                                 channelRegExp.source + "," +
+                                 channelRegExp.source + "," +
+                                 channelRegExp.source +
+                                 "(?:," + alphaChannelRegExp.source + ")?" +
+                             "\\)$", "i"),
+        ONECOLOR = one.color = function (obj) {
+            if (Object.prototype.toString.apply(obj) === '[object Array]') {
+                if (obj[0].length === 4) {
+                    // Assumed 4 element int RGB array from canvas with all channels [0;255]
+                    return new ONECOLOR.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
+                } else {
+                    // Assumed destringified array from one.color.JSON()
+                    return new ONECOLOR[obj[0]](obj.slice(1, obj.length));
                 }
-                return new color[colorSpaceName](
-                    parsefloat(matchCssSyntax[2]) / firstChannelDivisor,
-                    parsefloat(matchCssSyntax[4]) / secondChannelDivisor,
-                    parsefloat(matchCssSyntax[6]) / thirdChannelDivisor,
-                    alpha
-                );
+            } else if (obj.charCodeAt) {
+                // Test for CSS rgb(....) string
+                var matchCssSyntax = obj.match(cssColorRegExp);
+                if (matchCssSyntax) {
+                    var colorSpaceName = matchCssSyntax[1].toUpperCase(),
+                        alpha = typeof matchCssSyntax[8] === 'undefined' ? matchCssSyntax[8] : PARSEFLOAT(matchCssSyntax[8]),
+                        hasHue = colorSpaceName[0] === 'H',
+                        firstChannelDivisor = matchCssSyntax[3] ? 100 : (hasHue ? 360 : 255),
+                        secondChannelDivisor = (matchCssSyntax[5] || hasHue) ? 100 : 255,
+                        thirdChannelDivisor = (matchCssSyntax[7] || hasHue) ? 100 : 255;
+                    if (typeof ONECOLOR[colorSpaceName] === 'undefined') {
+                        throw new Error("one.color." + colorSpaceName + " is not installed.");
+                    }
+                    return new ONECOLOR[colorSpaceName](
+                        PARSEFLOAT(matchCssSyntax[2]) / firstChannelDivisor,
+                        PARSEFLOAT(matchCssSyntax[4]) / secondChannelDivisor,
+                        PARSEFLOAT(matchCssSyntax[6]) / thirdChannelDivisor,
+                        alpha
+                    );
+                }
+                // Assume hex syntax
+                if (obj.length < 6) {
+                    // Allow CSS shorthand
+                    obj = obj.replace(/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i, '$1$1$2$2$3$3');
+                }
+                // Split obj into red, green, and blue components
+                var hexMatch = obj.match(/^#?([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$/i);
+                if (hexMatch) {
+                    return new ONECOLOR.RGB(
+                        PARSEINT(hexMatch[1], 16) / 255,
+                        PARSEINT(hexMatch[2], 16) / 255,
+                        PARSEINT(hexMatch[3], 16) / 255
+                    );
+                }
+            } else if (typeof obj === 'object' && obj.isColor) {
+                return obj;
+            } else if (!isNaN(obj)) {
+                // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
+                return new ONECOLOR.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
             }
-            // Assume hex syntax
-            if (obj.length < 6) {
-                // Allow CSS shorthand
-                obj = obj.replace(/^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i, '$1$1$2$2$3$3');
-            }
-            // Split obj into red, green, and blue components
-            var hexMatch = obj.match(/^#?([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])([0-9a-f][0-9a-f])$/i);
-            if (hexMatch) {
-                return new color.RGB(
-                    parseint(hexMatch[1], 16) / 255,
-                    parseint(hexMatch[2], 16) / 255,
-                    parseint(hexMatch[3], 16) / 255
-                );
-            }
-        } else if (typeof obj === 'object' && obj.isColor) {
-            return obj;
-        } else if (!isNaN(obj)) {
-            // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
-            return new color.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
-        }
-        return false;
-    };
+            return false;
+        };
 
 /*jslint evil:true*/
-    color.installColorSpace = function (colorSpaceName, propertyNames, config) {
-        color[colorSpaceName] = new fn(propertyNames.join(","),
+    ONECOLOR.installColorSpace = function (colorSpaceName, propertyNames, config) {
+        ONECOLOR[colorSpaceName] = new FUNCTION(propertyNames.join(","),
             // Allow passing an array to the constructor:
             "if (Object.prototype.toString.apply(" + propertyNames[0] + ") === '[object Array]') {" +
                 propertyNames.map(function (propertyName, i) {
@@ -120,12 +125,12 @@ myColor = color(myColor);
                 }
             }).join(";") + ";"
         );
-        color[colorSpaceName].propertyNames = propertyNames;
+        ONECOLOR[colorSpaceName].propertyNames = propertyNames;
 
-        var prototype = color[colorSpaceName].prototype;
+        var prototype = ONECOLOR[colorSpaceName].prototype;
 
         ['valueOf', 'hex', 'css', 'cssa'].forEach(function (methodName) {
-            prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new fn("return this.rgb()." + methodName + "();"));
+            prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new FUNCTION("return this.rgb()." + methodName + "();"));
         });
 
         prototype.isColor = true;
@@ -146,7 +151,7 @@ myColor = color(myColor);
             return true;
         };
 
-        prototype.toJSON = new fn(
+        prototype.toJSON = new FUNCTION(
             "return ['" + colorSpaceName + "', " +
                 propertyNames.map(function (propertyName) {
                     return "this._" + propertyName;
@@ -158,7 +163,7 @@ myColor = color(myColor);
             if (config.hasOwnProperty(propertyName)) {
                 var matchFromColorSpace = propertyName.match(/^from(.*)$/);
                 if (matchFromColorSpace) {
-                    color[matchFromColorSpace[1].toUpperCase()].prototype[colorSpaceName.toLowerCase()] = config[propertyName];
+                    ONECOLOR[matchFromColorSpace[1].toUpperCase()].prototype[colorSpaceName.toLowerCase()] = config[propertyName];
                 } else {
                     prototype[propertyName] = config[propertyName];
                 }
@@ -169,13 +174,13 @@ myColor = color(myColor);
         prototype[colorSpaceName.toLowerCase()] = function () {
             return this;
         };
-        prototype.toString = new fn("return \"[one.color." + colorSpaceName + ":\"+" + propertyNames.map(function (propertyName, i) {
+        prototype.toString = new FUNCTION("return \"[one.color." + colorSpaceName + ":\"+" + propertyNames.map(function (propertyName, i) {
             return "\" " + propertyNames[i] + "=\"+this._" + propertyName;
         }).join("+") + "+\"]\";");
 
         // Generate getters and setters
         propertyNames.forEach(function (propertyName, i) {
-            prototype[propertyName] = new fn("value", "isDelta",
+            prototype[propertyName] = new FUNCTION("value", "isDelta",
                 // Simple getter mode: color.red()
                 "if (typeof value === 'undefined') {" +
                     "return this._" + propertyName + ";" +
@@ -194,13 +199,13 @@ myColor = color(myColor);
 
         function installForeignMethods(targetColorSpaceName, sourceColorSpaceName) {
             var obj = {};
-            obj[sourceColorSpaceName.toLowerCase()] = new fn("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
-            color[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
-                obj[propertyName] = new fn("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
+            obj[sourceColorSpaceName.toLowerCase()] = new FUNCTION("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
+            ONECOLOR[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
+                obj[propertyName] = new FUNCTION("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
             });
             for (var prop in obj) {
-                if (obj.hasOwnProperty(prop) && color[targetColorSpaceName].prototype[prop] === undefined) {
-                    color[targetColorSpaceName].prototype[prop] = obj[prop];
+                if (obj.hasOwnProperty(prop) && ONECOLOR[targetColorSpaceName].prototype[prop] === undefined) {
+                    ONECOLOR[targetColorSpaceName].prototype[prop] = obj[prop];
                 }
             }
         }
@@ -241,13 +246,13 @@ myColor = color(myColor);
      * @param {Number} [alpha] The alpha value, range: [0..1],
      * defaults to 1
      */
-    color.installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
+    ONECOLOR.installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
         /**
          * Get the standard RGB hex representation of the color.
          * @return {String} The hex string, e.g. "#f681df"
          */
         hex: function () {
-            var hexString = (round(255 * this._red) * 0x10000 + round(255 * this._green) * 0x100 + round(255 * this._blue)).toString(16);
+            var hexString = (ROUND(255 * this._red) * 0x10000 + ROUND(255 * this._green) * 0x100 + ROUND(255 * this._blue)).toString(16);
             return '#' + ('00000'.substr(0, 6 - hexString.length)) + hexString;
         },
 
@@ -257,7 +262,7 @@ myColor = color(myColor);
          * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
          */
         css: function () {
-            return "rgb(" + round(255 * this._red) + "," + round(255 * this._green) + "," + round(255 * this._blue) + ")";
+            return "rgb(" + ROUND(255 * this._red) + "," + ROUND(255 * this._green) + "," + ROUND(255 * this._blue) + ")";
         },
 
         /**
@@ -266,12 +271,10 @@ myColor = color(myColor);
          * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
          */
         cssa: function () {
-            return "rgba(" + round(255 * this._red) + "," + round(255 * this._green) + "," + round(255 * this._blue) + "," + this._alpha + ")";
+            return "rgba(" + ROUND(255 * this._red) + "," + ROUND(255 * this._green) + "," + ROUND(255 * this._blue) + "," + this._alpha + ")";
         }
     });
-
-    nameSpace.color = color;
-}(one, Function, parseInt, parseFloat, Math.round));
+}());
 
 /**
  * @name one.color.RGB.prototype.red
@@ -493,13 +496,15 @@ new one.color.HSV(.9, .2, .4).
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
-(function (nameSpace, math) {
-    nameSpace.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
+(function () {
+    var MATH = Math,
+        ONECOLOR = one.color;
+    ONECOLOR.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
         rgb: function () {
             var hue = this._hue,
                 saturation = this._saturation,
                 value = this._value,
-                i = math.min(5, math.floor(hue * 6)),
+                i = MATH.min(5, MATH.floor(hue * 6)),
                 f = hue * 6 - i,
                 p = value * (1 - saturation),
                 q = value * (1 - f * saturation),
@@ -539,7 +544,7 @@ new one.color.HSV(.9, .2, .4).
                 blue = q;
                 break;
             }
-            return new nameSpace.RGB(red, green, blue, this._alpha);
+            return new ONECOLOR.RGB(red, green, blue, this._alpha);
         },
 
         hsl: function () {
@@ -554,15 +559,15 @@ new one.color.HSV(.9, .2, .4).
             } else {
                 saturation = sv / svDivisor;
             }
-            return new nameSpace.HSL(this._hue, saturation, l / 2, this._alpha);
+            return new ONECOLOR.HSL(this._hue, saturation, l / 2, this._alpha);
         },
 
         fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
             var red = this._red,
                 green = this._green,
                 blue = this._blue,
-                max = math.max(red, green, blue),
-                min = math.min(red, green, blue),
+                max = MATH.max(red, green, blue),
+                min = MATH.min(red, green, blue),
                 delta = max - min,
                 hue,
                 saturation = (max === 0) ? 0 : (delta / max),
@@ -582,10 +587,10 @@ new one.color.HSV(.9, .2, .4).
                     break;
                 }
             }
-            return new nameSpace.HSV(hue, saturation, value, this._alpha);
+            return new ONECOLOR.HSV(hue, saturation, value, this._alpha);
         }
     });
-}(one.color, Math));
+}());
 
 /*global one*/
 
