@@ -14,7 +14,7 @@ outputfiles := one-color-debug.js one-color.js one-color-all-debug.js one-color-
 all: $(outputfiles)
 
 %.js: %-debug.js
-	uglifyjs -nc $< > $@
+	./bin/build.js $< > $@
 
 one-color-debug.js: $(jsfiles)
 	flattenOneInclude lib/one/color/_base.js > $@

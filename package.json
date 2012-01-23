@@ -15,8 +15,9 @@
         }
     ],
     "devDependencies": {
-        "assetgraph-builder": "= 0.2.36",
-        "uglify-js": ">=1.2.0",
+	"assetgraph": "=0.4.2",
+        "assetgraph-builder": "=0.3.3",
+        "optimist": "=0.3.1",
         "vows": "=0.6.1"
     },
     "engines": {
