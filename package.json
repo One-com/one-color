@@ -31,6 +31,6 @@
     "main": "one-color-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
-        "prepublish": "make; vows"
+        "prepublish": "make && vows"
     }
 }
