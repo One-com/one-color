@@ -759,6 +759,336 @@ one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], 
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
 
+/*global one*/
+
+/**
+ * @name one.color.CMYK
+ * @class
+ * <p>A color in the CMYK colorspace, with an optional alpha value.</p>
+ * <p>one.color.(RGB|HSL|HSV|CMYK) objects are designed to be
+ * immutable; all the conversion, set, and adjust methods return new
+ * objects.</p>
+ * <p>one.color.(RGB|HSL|HSV|CMYK) objects automatically get the set
+ * and adjust methods from all other installed colorspaces, so
+ * although you can use the explicit conversion methods ({@link one.color.CMYK#rgb},
+ * {@link one.color.CMYK#hsl}...), the below
+ * will work just fine:</p><pre><code>
+
+new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
+    blue(.2). // Implicit conversion to RGB (with alpha)
+    hue(-.1, true). // Implicit conversion to HSL(/HSV) (with alpha)
+    cssa(); // "rgba(20,13,0,0.2)"
+</code></pre>
+ * @static
+ *
+ * @constructor
+ * Create a new one.color.CMYK object. Component values outside the
+ * supported range, [0..1], will be adjusted automatically.
+ * @param {Number} cyan The cyan component, range: [0..1]
+ * @param {Number} magenta The magenta component, range: [0..1]
+ * @param {Number} yellow The yellow component, range: [0..1]
+ * @param {Number} black The black component, range: [0..1]
+ * @param {Number} [alpha] The alpha value, range: [0..1],
+ * defaults to 1
+ */
+
+/**
+ * @name one.color.CMYK.prototype.cyan
+ * @function
+ * @param {Number} [cyan] The new cyan component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
+ */
+
+/**
+ * @name one.color.CMYK.prototype.magenta
+ * @function
+ * @param {Number} [magenta] The new magenta component, range:
+ * [0..1]. If not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
+ */
+
+/**
+ * @name one.color.CMYK.prototype.yellow
+ * @function
+ * @param {Number} yellow The new yellow component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
+ */
+
+/**
+ * @name one.color.CMYK.prototype.black
+ * @function
+ * @param {Number} black The new black component, range: [0..1]. If
+ * not provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
+ */
+
+/**
+ * @name one.color.CMYK.prototype.alpha
+ * @function
+ * @param {Number} alpha The new alpha value, range: [0..1]. If not
+ * provided, the current value will be returned.
+ * @param {Boolean} [isDelta] Whether the new value is relative to the
+ * old value of the property. If the resulting value falls outside the
+ * supported range, [0..1], it will be adjusted automatically.
+ * @return {Number|one.color.CMYK} The current value of the property,
+ * or a new color object with the changed value.
+ */
+
+/**
+ * @name one.color.CMYK.prototype.toJSON
+ * @description Convert the color to a JSON representation.
+ * @function
+ * @return {Array}
+ */
+
+/**
+ * @name one.color.CMYK.prototype.rgb
+ * @description Convert the color to a {@link one.color.RGB} object.
+ * @function
+ * @return {one.color.RGB}
+ */
+
+/**
+ * @name one.color.CMYK.prototype.hsv
+ * @description Convert the color to a {@link one.color.HSV} object.
+ * @function
+ * @requires one.color.HSV
+ * @return {one.color.HSV}
+ */
+
+/**
+ * @name one.color.CMYK.prototype.hsl
+ * @description Convert the color to a {@link one.color.HSL} object.
+ * @function
+ * @requires one.color.HSL
+ * @return {one.color.HSL}
+ */
+
+/**
+ * @name one.color.CMYK.prototype.cmyk
+ * @description Convert the color to a {@link one.color.CMYK} object, ie. return the object itself.
+ * @function
+ * @return {one.color.CMYK}
+ */
+
+/**
+ * @name one.color.CMYK.prototype.hex
+ * @description Get the standard RGB hex representation of the color.
+ * @function
+ * @return {String} The hex string, e.g. "#f681df"
+ */
+
+/**
+ * @name one.color.CMYK.prototype.css
+ * @description Get a valid CSS color representation of the color without an alpha value.
+ * @function
+ * @return {String} The CSS color string, e.g. "rgb(123, 2, 202)"
+ */
+
+/**
+ * @name one.color.CMYK.prototype.cssa
+ * @description Get a valid CSS color representation of the color, including the alpha value.
+ * @function
+ * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
+ */
+
+one.color.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
+    rgb: function () {
+        return new one.color.RGB((1 - this._cyan * (1 - this._black) - this._black),
+                                 (1 - this._magenta * (1 - this._black) - this._black),
+                                 (1 - this._yellow * (1 - this._black) - this._black),
+                                 this._alpha);
+    },
+
+    fromRgb: function () { // Becomes one.color.RGB.prototype.cmyk
+        // Adapted from http://www.javascripter.net/faq/rgb2cmyk.htm
+        var red = this._red,
+            green = this._green,
+            blue = this._blue,
+            cyan = 1 - red,
+            magenta = 1 - green,
+            yellow = 1 - blue,
+            black = 1;
+        if (red || green || blue) {
+            black = Math.min(cyan, Math.min(magenta, yellow));
+            cyan = (cyan - black) / (1 - black);
+            magenta = (magenta - black) / (1 - black);
+            yellow = (yellow - black) / (1 - black);
+        } else {
+            black = 1;
+        }
+        return new one.color.CMYK(cyan, magenta, yellow, black, this._alpha);
+    }
+});
+
+one.color.namedColors = {
+    aliceblue: '#f0f8ff',
+    antiquewhite: '#faebd7',
+    aqua: '#00ffff',
+    aquamarine: '#7fffd4',
+    azure: '#f0ffff',
+    beige: '#f5f5dc',
+    bisque: '#ffe4c4',
+    black: '#000000',
+    blanchedalmond: '#ffebcd',
+    blue: '#0000ff',
+    blueviolet: '#8a2be2',
+    brown: '#a52a2a',
+    burlywood: '#deb887',
+    cadetblue: '#5f9ea0',
+    chartreuse: '#7fff00',
+    chocolate: '#d2691e',
+    coral: '#ff7f50',
+    cornflowerblue: '#6495ed',
+    cornsilk: '#fff8dc',
+    crimson: '#dc143c',
+    cyan: '#00ffff',
+    darkblue: '#00008b',
+    darkcyan: '#008b8b',
+    darkgoldenrod: '#b8860b',
+    darkgray: '#a9a9a9',
+    darkgrey: '#a9a9a9',
+    darkgreen: '#006400',
+    darkkhaki: '#bdb76b',
+    darkmagenta: '#8b008b',
+    darkolivegreen: '#556b2f',
+    darkorange: '#ff8c00',
+    darkorchid: '#9932cc',
+    darkred: '#8b0000',
+    darksalmon: '#e9967a',
+    darkseagreen: '#8fbc8f',
+    darkslateblue: '#483d8b',
+    darkslategray: '#2f4f4f',
+    darkslategrey: '#2f4f4f',
+    darkturquoise: '#00ced1',
+    darkviolet: '#9400d3',
+    deeppink: '#ff1493',
+    deepskyblue: '#00bfff',
+    dimgray: '#696969',
+    dimgrey: '#696969',
+    dodgerblue: '#1e90ff',
+    firebrick: '#b22222',
+    floralwhite: '#fffaf0',
+    forestgreen: '#228b22',
+    fuchsia: '#ff00ff',
+    gainsboro: '#dcdcdc',
+    ghostwhite: '#f8f8ff',
+    gold: '#ffd700',
+    goldenrod: '#daa520',
+    gray: '#808080',
+    grey: '#808080',
+    green: '#008000',
+    greenyellow: '#adff2f',
+    honeydew: '#f0fff0',
+    hotpink: '#ff69b4',
+    indianred: '#cd5c5c',
+    indigo: '#4b0082',
+    ivory: '#fffff0',
+    khaki: '#f0e68c',
+    lavender: '#e6e6fa',
+    lavenderblush: '#fff0f5',
+    lawngreen: '#7cfc00',
+    lemonchiffon: '#fffacd',
+    lightblue: '#add8e6',
+    lightcoral: '#f08080',
+    lightcyan: '#e0ffff',
+    lightgoldenrodyellow: '#fafad2',
+    lightgray: '#d3d3d3',
+    lightgrey: '#d3d3d3',
+    lightgreen: '#90ee90',
+    lightpink: '#ffb6c1',
+    lightsalmon: '#ffa07a',
+    lightseagreen: '#20b2aa',
+    lightskyblue: '#87cefa',
+    lightslategray: '#778899',
+    lightslategrey: '#778899',
+    lightsteelblue: '#b0c4de',
+    lightyellow: '#ffffe0',
+    lime: '#00ff00',
+    limegreen: '#32cd32',
+    linen: '#faf0e6',
+    magenta: '#ff00ff',
+    maroon: '#800000',
+    mediumaquamarine: '#66cdaa',
+    mediumblue: '#0000cd',
+    mediumorchid: '#ba55d3',
+    mediumpurple: '#9370d8',
+    mediumseagreen: '#3cb371',
+    mediumslateblue: '#7b68ee',
+    mediumspringgreen: '#00fa9a',
+    mediumturquoise: '#48d1cc',
+    mediumvioletred: '#c71585',
+    midnightblue: '#191970',
+    mintcream: '#f5fffa',
+    mistyrose: '#ffe4e1',
+    moccasin: '#ffe4b5',
+    navajowhite: '#ffdead',
+    navy: '#000080',
+    oldlace: '#fdf5e6',
+    olive: '#808000',
+    olivedrab: '#6b8e23',
+    orange: '#ffa500',
+    orangered: '#ff4500',
+    orchid: '#da70d6',
+    palegoldenrod: '#eee8aa',
+    palegreen: '#98fb98',
+    paleturquoise: '#afeeee',
+    palevioletred: '#d87093',
+    papayawhip: '#ffefd5',
+    peachpuff: '#ffdab9',
+    peru: '#cd853f',
+    pink: '#ffc0cb',
+    plum: '#dda0dd',
+    powderblue: '#b0e0e6',
+    purple: '#800080',
+    red: '#ff0000',
+    rosybrown: '#bc8f8f',
+    royalblue: '#4169e1',
+    saddlebrown: '#8b4513',
+    salmon: '#fa8072',
+    sandybrown: '#f4a460',
+    seagreen: '#2e8b57',
+    seashell: '#fff5ee',
+    sienna: '#a0522d',
+    silver: '#c0c0c0',
+    skyblue: '#87ceeb',
+    slateblue: '#6a5acd',
+    slategray: '#708090',
+    slategrey: '#708090',
+    snow: '#fffafa',
+    springgreen: '#00ff7f',
+    steelblue: '#4682b4',
+    tan: '#d2b48c',
+    teal: '#008080',
+    thistle: '#d8bfd8',
+    tomato: '#ff6347',
+    turquoise: '#40e0d0',
+    violet: '#ee82ee',
+    wheat: '#f5deb3',
+    white: '#ffffff',
+    whitesmoke: '#f5f5f5',
+    yellow: '#ffff00',
+    yellowgreen: '#9acd32'
+};
+
 // This file is purely for the build system
 
 if (typeof module !== 'undefined') {
