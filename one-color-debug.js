@@ -224,6 +224,12 @@ myColor = color(myColor);
         installedColorSpaces.push(colorSpaceName);
     };
 
+    ONECOLOR.installMethod = function (name, fn) {
+        installedColorSpaces.forEach(function (colorSpace) {
+            ONECOLOR[colorSpace].prototype[name] = fn;
+        });
+    };
+
     /**
      * @name one.color.RGB
      * @class

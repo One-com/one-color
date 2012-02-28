@@ -224,6 +224,12 @@ myColor = color(myColor);
         installedColorSpaces.push(colorSpaceName);
     };
 
+    ONECOLOR.installMethod = function (name, fn) {
+        installedColorSpaces.forEach(function (colorSpace) {
+            ONECOLOR[colorSpace].prototype[name] = fn;
+        });
+    };
+
     /**
      * @name one.color.RGB
      * @class
@@ -1092,8 +1098,132 @@ one.color.namedColors = {
     yellowgreen: '#9acd32'
 };
 
+one.color.installMethod('clearer', function (amount) {
+	amount = amount || 0.1;
+	return this.alpha(-amount, true);
+});
+
+
+one.color.installMethod('darken', function (amount) {
+	amount = amount || 0.1;
+	return this.lightness(-amount, true);
+});
+
+
+one.color.installMethod('saturate', function (amount) {
+	amount = amount || 0.1;
+	return this.saturation(-amount, true);
+});
+
+(function () {
+    function gs () {
+        var rgb = this.rgb(),
+            val = rgb._red * 0.3 + rgb._green * 0.59 + rgb._blue * 0.11;
+
+        return new one.color.RGB(val, val, val, this._alpha);
+    };
+
+    one.color.installMethod('greyscale', gs);
+    one.color.installMethod('grayscale', gs);
+}());
+
+
+one.color.installMethod('lighten', function (amount) {
+	amount = amount || 0.1;
+	return this.lightness(amount, true);
+});
+
+one.color.installMethod('mix', function (otherColor, weight) {
+    var otherColor = one.color(otherColor),
+        weight = 1 - (weight || 0.5),
+        w = weight * 2 - 1,
+        a = this._alpha - otherColor._alpha,
+        weight1 = (((w * a == -1) ? w : (w + a) / (1 + w * a)) + 1) / 2,
+        weight2 = 1 - weight1,
+        rgb = this.rgb(),
+        otherColor = otherColor.rgb();
+
+    return new one.color.RGB(
+        this._red * weight1 + otherColor._red * weight2,
+        this._green * weight1 + otherColor._green * weight2,
+        this._blue * weight1 + otherColor._blue * weight2,
+        this._alpha * weight + otherColor._alpha * (1 - weight)
+    );
+});
+
+one.color.installMethod('negate', function () {
+    var rgb = this.rgb();
+    return new one.color.RGB(1 - rgb._red, 1 - rgb._green, 1 - rgb._blue, this._alpha);
+});
+
+one.color.installMethod('opaquer', function (amount) {
+	amount = amount || 0.1;
+	return this.alpha(amount, true);
+});
+
+one.color.installMethod('rotate', function (degrees) {
+	amount = (degrees || 0) / 360;
+	return this.hue(amount, true);
+});
+
+
+one.color.installMethod('saturate', function (amount) {
+	amount = amount || 0.1;
+	return this.saturation(amount, true);
+});
+
+// Adapted from http://gimp.sourcearchive.com/documentation/2.6.6-1ubuntu1/color-to-alpha_8c-source.html
+/*
+    toAlpha returns a color where the values of the argument have been converted to alpha
+*/
+one.color.installMethod('toAlpha', function (color) {
+    var me = this.rgb(),
+        other = one.color(color).rgb(),
+        epsilon = 1e-10,
+        a = new one.color(0, 0, 0, me._alpha),
+        channels = ['_red', '_green', '_blue'];
+
+    channels.forEach(function (channel) {
+        if (me[channel] < epsilon) {
+            a[channel] = me[channel];
+        } else if (me[channel] > other[channel]) {
+            a[channel] = (me[channel] - other[channel]) / (1 - other[channel]);
+        } else if (me[channel] > other[channel]) {
+            a[channel] = (other[channel] - me[channel]) / other[channel];
+        } else {
+            a[channel] = 0;
+        }
+    });
+
+    if (a._red > a._green) {
+        if (a._red > a._blue) {
+            me._alpha = a._red;
+        } else {
+            me._alpha = a._blue;
+        }
+    } else if (a._green > a._blue) {
+        me._alpha = a._green;
+    } else {
+        me._alpha = a._blue;
+    }
+
+    if (me._alpha < epsilon) {
+        return me;
+    }
+
+    channels.foreach(function (channel) {
+        me[channel] = (me[channel] - other[channel]) / me._alpha + other[channel];
+    });
+    me._alpha *= a._alpha;
+
+    return me;
+});
+
 // This file is purely for the build system
 
+// Convenience functions
+
+// Node module export
 if (typeof module !== 'undefined') {
     module.exports = one.color;
 }
