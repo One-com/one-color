@@ -17,7 +17,8 @@ JavaScript color calculation toolkit for node.js and the browser.
 Usage
 -----
 
-In the browser:
+In the browser (change `one-color.js` to `one-color-all.js` to gain
+named color support):
 
     <script src='one-color.js'></script>
     <script>
@@ -36,6 +37,12 @@ variables:
     var myColor = one.color('#a9d91d');
     myColor instanceof one.color.RGB; // true
     myColor.red() // 0.6627450980392157
+
+You can also parse named CSS colors (works out of the box in node.js,
+but the requires the slightly bigger `one-color-all.js` build in the
+browser):
+
+    one.color('maroon').lightness(.3).hex() // '#990000'
 
 To turn a color instance back into a string, use the `hex()`, `css()`,
 and `cssa()` methods:
@@ -106,6 +113,12 @@ Color parser function, the recommended way to create a color instance:
     one.color('hsva(120, 75%, 75%, 0)') // CSS hsva syntax (non-standard)
     one.color([0, 4, 255, 120]) // CanvasPixelArray entry, RGBA
     one.color(["RGB", .5, .1, .6, .9]) // The output format of color.toJSON()
+
+The slightly bigger `one-color-add.js` build adds support for
+<a href='http://en.wikipedia.org/wiki/Web_colors'>the standard suite of named CSS colors</a>:
+
+    one.color('maroon')
+    one.color('darkolivegreen')
 
 Existing one.color instances pass through unchanged, which is useful
 in APIs where you want to accept either a string or a color instance:
@@ -212,8 +225,10 @@ The Makefile uses <a href="https://github.com/One-com/assetgraph">AssetGraph</a>
 If you aren't up for a complete installation, there are pre-built
 packages in the repository as well as the npm package:
 
-* <a href="https://raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>
-* <a href="https://raw.github.com/One-com/one-color/master/one-color-debug.js">one-color-debug.js</a>
+* Basic library: <a href="https://raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>,
+  debuggable version: <a href="https://raw.github.com/One-com/one-color/master/one-color-debug.js">one-color-debug.js</a>
+* Full library including named color support: <a href="https://raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a>,
+  debuggable version: <a href="https://raw.github.com/One-com/one-color/master/one-color-all-debug.js">one-color-all-debug.js</a>.
 
 License
 =======
