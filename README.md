@@ -51,8 +51,8 @@ and `cssa()` methods:
     one.color('#bb7b81').cssa() // 'rgba(187,123,129,1)'
 
 Color instances have getters/setters for all channels in all supported
-colorspaces (`red`, `green`, `blue`, `hue`, `saturation`, `lightness`,
-`value`, `alpha`). Thus you don't need to think about which colorspace
+colorspaces (`red()`, `green()`, `blue()`, `hue()`, `saturation()`, `lightness()`,
+`value()`, `alpha()`). Thus you don't need to think about which colorspace
 you're in. All the necessary conversions happen automatically:
 
     one.color('#ff0000') // Red in RGB
