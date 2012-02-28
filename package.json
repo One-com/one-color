@@ -28,7 +28,7 @@
     "publishConfig": {
         "registry": "http://registry.npmjs.org/"
     },
-    "main": "one-color-debug.js",
+    "main": "one-color-all-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
         "prepublish": "make && vows"
