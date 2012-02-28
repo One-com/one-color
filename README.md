@@ -3,7 +3,7 @@ one.color
 
 JavaScript color calculation toolkit for node.js and the browser.
 
-* RGB, HSV, and HSL colorspace support (a CMYK implementation also exists)
+* RGB, HSV, HSL, and CMYK colorspace support (experimental implementations of LAB and XYZ)
 * Legal values for all channels are 0..1
 * Instances are immutable -- a new object is created for each manipulation
 * All internal calculations are done using floating point, so very little precision is lost due to rounding errors when converting between colorspaces
@@ -97,6 +97,22 @@ It's preserved when converting between colorspaces:
         .saturation(.2)
         .alpha() // 0.8
 
+
+Comparing color objects
+-----------------------
+
+If you need to know if two colors represent the same 8 bit color, regardless
+of colorspace, compare their `hex()` values:
+
+    one.color('#f00').hex() === one.color('#e00').red(1).hex() // true
+
+Use the `equals` method to compare two color instances within a certain
+epsilon (defaults to `1e-9`):
+
+    one.color('#e00').lightness(.00001, true).equals(one.color('#e00'), 1e-5) // false
+    one.color('#e00').lightness(.000001, true).equals(one.color('#e00'), 1e-5) // true
+
+
 API overview
 ============
 
@@ -143,6 +159,10 @@ Getters -- return the value of the channel (converts to other colorspaces as nee
     color.value()
     color.lightness()
     color.alpha()
+    color.cyan()    // one-color-all.js and node.js only
+    color.magenta() // one-color-all.js and node.js only
+    color.yellow()  // one-color-all.js and node.js only
+    color.black()   // one-color-all.js and node.js only
 
 Setters -- return new color instances with one channel changed:
 
@@ -154,6 +174,10 @@ Setters -- return new color instances with one channel changed:
     color.value(<number>)
     color.lightness(<number>)
     color.alpha(<number>)
+    color.cyan(<number>)    // one-color-all.js and node.js only
+    color.magenta(<number>) // one-color-all.js and node.js only
+    color.yellow(<number>)  // one-color-all.js and node.js only
+    color.black(<number>)   // one-color-all.js and node.js only
 
 Adjusters -- return new color instances with the channel adjusted by
 the specified delta (0..1):
@@ -166,10 +190,14 @@ the specified delta (0..1):
     color.value(<number>, true)
     color.lightness(<number>, true)
     color.alpha(<number>, true)
+    color.cyan(<number>, true)    // one-color-all.js and node.js only
+    color.magenta(<number>, true) // one-color-all.js and node.js only
+    color.yellow(<number>, true)  // one-color-all.js and node.js only
+    color.black(<number>, true)   // one-color-all.js and node.js only
 
-Comparison with other color objects (epsilon defaults to `1e-9`):
+Comparison with other color objects, returns `true` or `false` (epsilon defaults to `1e-9`):
 
-    color.equals(otherColor, <epsilon>)
+    color.equals(otherColor[, <epsilon>])
 
 
 Mostly for internal (and plugin) use:
@@ -177,9 +205,13 @@ Mostly for internal (and plugin) use:
 
 "Low level" constructors, accept 3 or 4 numerical arguments (0..1):
 
-    new one.color.RGB(r, g, b[, a])
-    new one.color.HSL(h, s, l[, a])
-    new one.color.HSV(h, s, v[, a])
+    new one.color.RGB(<red>, <green>, <blue>[, <alpha>])
+    new one.color.HSL(<hue>, <saturation>, <lightness>[, <alpha>])
+    new one.color.HSV(<hue>, <saturation>, <value>[, <alpha>])
+
+The `one-color-all.js` build includes CMYK support:
+
+    new one.color.CMYK(<cyan>, <magenta>, <yellow>, <black>[, <alpha>])
 
 All color instances have `rgb()`, `hsv()`, and `hsl()` methods for
 explicitly converting to another color space. Like the setter and
@@ -199,12 +231,14 @@ Adding a colorspace implementation:
     one.color.installColorSpace(name, channelNames, {
         // Mandatory: Method for converting from your colorspace to RGB
         rgb: function () {
+            // ...
             return new one.color.RGB(r, g, b, a);
         },
 
         // Mandatory: Method for converting from RGB to your colorspace
         // (will be installed as a method on RGB color instances)
         fromRgb: function () {
+            // ...
             return new one.color.MyColorSpace(x, y, z, a);
         }
         // Optional: More methods for converting directly to other colorspaces.
