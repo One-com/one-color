@@ -75,7 +75,7 @@ object is returned with that channel replaced:
     // ... but as the objects are immutable, the original object retains its value:
     myColor.red() // 0
 
-When called with a single numerical argument (0..1) and a `true` as
+When called with a single numerical argument (0..1) and `true` as
 the second argument, a new value is returned with that channel
 adjusted:
 
