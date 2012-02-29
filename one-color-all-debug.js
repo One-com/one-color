@@ -502,101 +502,97 @@ new one.color.HSV(.9, .2, .4).
  * @function
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
-(function () {
-    var MATH = Math,
-        ONECOLOR = one.color;
-    ONECOLOR.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
-        rgb: function () {
-            var hue = this._hue,
-                saturation = this._saturation,
-                value = this._value,
-                i = MATH.min(5, MATH.floor(hue * 6)),
-                f = hue * 6 - i,
-                p = value * (1 - saturation),
-                q = value * (1 - f * saturation),
-                t = value * (1 - (1 - f) * saturation),
-                red,
-                green,
-                blue;
-            switch (i) {
-            case 0:
-                red = value;
-                green = t;
-                blue = p;
-                break;
-            case 1:
-                red = q;
-                green = value;
-                blue = p;
-                break;
-            case 2:
-                red = p;
-                green = value;
-                blue = t;
-                break;
-            case 3:
-                red = p;
-                green = q;
-                blue = value;
-                break;
-            case 4:
-                red = t;
-                green = p;
-                blue = value;
-                break;
-            case 5:
-                red = value;
-                green = p;
-                blue = q;
-                break;
-            }
-            return new ONECOLOR.RGB(red, green, blue, this._alpha);
-        },
-
-        hsl: function () {
-            var l = (2 - this._saturation) * this._value,
-                sv = this._saturation * this._value,
-                svDivisor = l <= 1 ? l : (2 - l),
-                saturation;
-
-            // Avoid division by zero when lightness approaches zero:
-            if (svDivisor < 1e-9) {
-                saturation = 0;
-            } else {
-                saturation = sv / svDivisor;
-            }
-            return new ONECOLOR.HSL(this._hue, saturation, l / 2, this._alpha);
-        },
-
-        fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
-            var red = this._red,
-                green = this._green,
-                blue = this._blue,
-                max = MATH.max(red, green, blue),
-                min = MATH.min(red, green, blue),
-                delta = max - min,
-                hue,
-                saturation = (max === 0) ? 0 : (delta / max),
-                value = max;
-            if (delta === 0) {
-                hue = 0;
-            } else {
-                switch (max) {
-                case red:
-                    hue = (green - blue) / delta / 6 + (green < blue ? 1 : 0);
-                    break;
-                case green:
-                    hue = (blue - red) / delta / 6 + 1 / 3;
-                    break;
-                case blue:
-                    hue = (red - green) / delta / 6 + 2 / 3;
-                    break;
-                }
-            }
-            return new ONECOLOR.HSV(hue, saturation, value, this._alpha);
+ONECOLOR.installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
+    rgb: function () {
+        var hue = this._hue,
+            saturation = this._saturation,
+            value = this._value,
+            i = Math.min(5, Math.floor(hue * 6)),
+            f = hue * 6 - i,
+            p = value * (1 - saturation),
+            q = value * (1 - f * saturation),
+            t = value * (1 - (1 - f) * saturation),
+            red,
+            green,
+            blue;
+        switch (i) {
+        case 0:
+            red = value;
+            green = t;
+            blue = p;
+            break;
+        case 1:
+            red = q;
+            green = value;
+            blue = p;
+            break;
+        case 2:
+            red = p;
+            green = value;
+            blue = t;
+            break;
+        case 3:
+            red = p;
+            green = q;
+            blue = value;
+            break;
+        case 4:
+            red = t;
+            green = p;
+            blue = value;
+            break;
+        case 5:
+            red = value;
+            green = p;
+            blue = q;
+            break;
         }
-    });
-}());
+        return new ONECOLOR.RGB(red, green, blue, this._alpha);
+    },
+
+    hsl: function () {
+        var l = (2 - this._saturation) * this._value,
+            sv = this._saturation * this._value,
+            svDivisor = l <= 1 ? l : (2 - l),
+            saturation;
+
+        // Avoid division by zero when lightness approaches zero:
+        if (svDivisor < 1e-9) {
+            saturation = 0;
+        } else {
+            saturation = sv / svDivisor;
+        }
+        return new ONECOLOR.HSL(this._hue, saturation, l / 2, this._alpha);
+    },
+
+    fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
+        var red = this._red,
+            green = this._green,
+            blue = this._blue,
+            max = Math.max(red, green, blue),
+            min = Math.min(red, green, blue),
+            delta = max - min,
+            hue,
+            saturation = (max === 0) ? 0 : (delta / max),
+            value = max;
+        if (delta === 0) {
+            hue = 0;
+        } else {
+            switch (max) {
+            case red:
+                hue = (green - blue) / delta / 6 + (green < blue ? 1 : 0);
+                break;
+            case green:
+                hue = (blue - red) / delta / 6 + 1 / 3;
+                break;
+            case blue:
+                hue = (red - green) / delta / 6 + 2 / 3;
+                break;
+            }
+        }
+        return new ONECOLOR.HSV(hue, saturation, value, this._alpha);
+    }
+});
 
 /*global one*/
 
@@ -630,7 +626,7 @@ new one.color.HSL(.4, .3, .9, .9). // HSL with alpha
  * defaults to 1
  */
 
-one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
+ONECOLOR.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
     hsv: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
         var l = this._lightness * 2,
@@ -644,7 +640,7 @@ one.color.installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], 
             saturation = (2 * s) / (l + s);
         }
 
-        return new one.color.HSV(this._hue, saturation, (l + s) / 2, this._alpha);
+        return new ONECOLOR.HSV(this._hue, saturation, (l + s) / 2, this._alpha);
     },
 
     rgb: function () {
@@ -913,9 +909,9 @@ new one.color.CMYK(.4, .2, .4, .9, .2). // CMYK with alpha
  * @return {String} The CSS color string, e.g. "rgba(123, 2, 202, 0.253)"
  */
 
-one.color.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
+ONECOLOR.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
     rgb: function () {
-        return new one.color.RGB((1 - this._cyan * (1 - this._black) - this._black),
+        return new ONECOLOR.RGB((1 - this._cyan * (1 - this._black) - this._black),
                                  (1 - this._magenta * (1 - this._black) - this._black),
                                  (1 - this._yellow * (1 - this._black) - this._black),
                                  this._alpha);
@@ -938,11 +934,11 @@ one.color.installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alph
         } else {
             black = 1;
         }
-        return new one.color.CMYK(cyan, magenta, yellow, black, this._alpha);
+        return new ONECOLOR.CMYK(cyan, magenta, yellow, black, this._alpha);
     }
 });
 
-one.color.namedColors = {
+ONECOLOR.namedColors = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
     aqua: '#00ffff',
@@ -1217,6 +1213,6 @@ ONECOLOR.installMethod('toAlpha', function (color) {
 
 // Node module export
 if (typeof module !== 'undefined') {
-    module.exports = one.color;
+    module.exports = ONECOLOR;
 }
 
