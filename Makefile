@@ -17,10 +17,10 @@ all: $(outputfiles)
 	./bin/build.js $< > $@
 
 one-color-debug.js: $(jsfiles)
-	flattenOneInclude lib/one/color/_base.js > $@
+	flattenOneInclude lib/color/_base.js > $@
 
 one-color-all-debug.js: $(jsfiles)
-	flattenOneInclude lib/one/color/_all.js > $@
+	flattenOneInclude lib/color/_all.js > $@
 
 doc: $(jsfiles)
 	mkdir -p doc
