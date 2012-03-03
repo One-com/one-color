@@ -52,7 +52,7 @@ and `cssa()` methods:
 
 Color instances have getters/setters for all channels in all supported
 colorspaces (`red()`, `green()`, `blue()`, `hue()`, `saturation()`, `lightness()`,
-`value()`, `alpha()`). Thus you don't need to think about which colorspace
+`value()`, `alpha()`, etc.). Thus you don't need to think about which colorspace
 you're in. All the necessary conversions happen automatically:
 
     one.color('#ff0000') // Red in RGB
@@ -101,17 +101,21 @@ It's preserved when converting between colorspaces:
 Comparing color objects
 -----------------------
 
-If you need to know if two colors represent the same 8 bit color, regardless
+If you need to know whether two colors represent the same 8 bit color, regardless
 of colorspace, compare their `hex()` values:
 
     one.color('#f00').hex() === one.color('#e00').red(1).hex() // true
 
 Use the `equals` method to compare two color instances within a certain
-epsilon (defaults to `1e-9`):
+epsilon (defaults to `1e-9`).
 
     one.color('#e00').lightness(.00001, true).equals(one.color('#e00'), 1e-5) // false
     one.color('#e00').lightness(.000001, true).equals(one.color('#e00'), 1e-5) // true
 
+Before comparing the `equals` method converts the other color to the right colorspace,
+so you don't need to convert explicitly in this case either:
+
+    one.color('#e00').hsv().equals(one.color('#e00')) // true
 
 API overview
 ============
