@@ -15,7 +15,7 @@
         }
     ],
     "devDependencies": {
-	"assetgraph": "=0.4.2",
+	"assetgraph": "=0.4.4",
         "assetgraph-builder": "=0.3.3",
         "optimist": "=0.3.1",
         "vows": "=0.6.1"

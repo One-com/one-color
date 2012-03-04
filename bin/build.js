@@ -7,7 +7,7 @@ var AssetGraph = require('assetgraph'),
 
 new AssetGraph()
     .loadAssets(commandLineOptions._)
-    .pullGlobalsIntoVariables({type: 'JavaScript'}, undefined, true)
+    .pullGlobalsIntoVariables({type: 'JavaScript'}, {wrapInFunction: true})
     .compressJavaScript()
     .queue(function (assetGraph) {
         console.log(assetGraph.findAssets()[0].text);
