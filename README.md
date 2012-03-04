@@ -230,30 +230,6 @@ the number of implicit conversions:
     // Alerts '0 0.06265060240963878 0.5999999999999999':
     alert(myColor.red() + ' ' + myColor.green() + ' ' + myColor.blue());
 
-Adding a colorspace implementation:
-
-    one.color.installColorSpace(name, channelNames, {
-        // Mandatory: Method for converting from your colorspace to RGB
-        rgb: function () {
-            // ...
-            return new one.color.RGB(r, g, b, a);
-        },
-
-        // Mandatory: Method for converting from RGB to your colorspace
-        // (will be installed as a method on RGB color instances)
-        fromRgb: function () {
-            // ...
-            return new one.color.MyColorSpace(x, y, z, a);
-        }
-        // Optional: More methods for converting directly to other colorspaces.
-        hsv: function () {
-            // Method for converting from your colorspace to HSV...
-            return new one.color.HSV(h, s, v, a);
-        }
-    });
-
-See `HSL.js`, `HSV.js`, and `CMYK.js` in `lib/color` for examples.
-
 
 Building
 ========
