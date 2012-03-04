@@ -252,7 +252,7 @@ Adding a colorspace implementation:
         }
     });
 
-See `HSL.js`, `HSV.js`, and `CMYK.js` in `lib/one/color` for examples.
+See `HSL.js`, `HSV.js`, and `CMYK.js` in `lib/color` for examples.
 
 
 Building
