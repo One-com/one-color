@@ -17,7 +17,7 @@ JavaScript color calculation toolkit for node.js and the browser.
 Usage
 -----
 
-In the browser (change `one-color.js` to `one-color-all.js` to gain
+In the browser (change <a href="//raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a> to <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a> to gain
 named color support):
 
 ```html
@@ -45,7 +45,7 @@ myColor.red() // 0.6627450980392157
 ```
 
 You can also parse named CSS colors (works out of the box in node.js,
-but the requires the slightly bigger `one-color-all.js` build in the
+but the requires the slightly bigger <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a> build in the
 browser):
 
 ```javascript
@@ -160,7 +160,7 @@ one.color([0, 4, 255, 120]) // CanvasPixelArray entry, RGBA
 one.color(["RGB", .5, .1, .6, .9]) // The output format of color.toJSON()
 ```
 
-The slightly bigger `one-color-all.js` build adds support for
+The slightly bigger <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a> build adds support for
 <a href='http://en.wikipedia.org/wiki/Web_colors'>the standard suite of named CSS colors</a>:
 
 ```javascript
@@ -252,7 +252,7 @@ new one.color.RGB(<red>, <green>, <blue>[, <alpha>])
 new one.color.HSL(<hue>, <saturation>, <lightness>[, <alpha>])
 new one.color.HSV(<hue>, <saturation>, <value>[, <alpha>])
 ```
-The `one-color-all.js` build includes CMYK support:
+The <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a> build includes CMYK support:
 
 ```javascript
 new one.color.CMYK(<cyan>, <magenta>, <yellow>, <black>[, <alpha>])
@@ -281,10 +281,10 @@ The Makefile uses <a href="https://github.com/One-com/assetgraph">AssetGraph</a>
 If you aren't up for a complete installation, there are pre-built
 packages in the repository as well as the npm package:
 
-* Basic library: <a href="https://raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>,
-  debuggable version: <a href="https://raw.github.com/One-com/one-color/master/one-color-debug.js">one-color-debug.js</a>
-* Full library including named color support: <a href="https://raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a>,
-  debuggable version: <a href="https://raw.github.com/One-com/one-color/master/one-color-all-debug.js">one-color-all-debug.js</a>.
+* Basic library: <a href="//raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>,
+  debuggable version: <a href="//raw.github.com/One-com/one-color/master/one-color-debug.js">one-color-debug.js</a>
+* Full library including named color support: <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a>,
+  debuggable version: <a href="//raw.github.com/One-com/one-color/master/one-color-all-debug.js">one-color-all-debug.js</a>.
 
 License
 =======
