@@ -160,7 +160,7 @@ one.color([0, 4, 255, 120]) // CanvasPixelArray entry, RGBA
 one.color(["RGB", .5, .1, .6, .9]) // The output format of color.toJSON()
 ```
 
-The slightly bigger `one-color-add.js` build adds support for
+The slightly bigger `one-color-all.js` build adds support for
 <a href='http://en.wikipedia.org/wiki/Web_colors'>the standard suite of named CSS colors</a>:
 
 ```javascript
