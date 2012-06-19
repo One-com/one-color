@@ -289,4 +289,4 @@ packages in the repository as well as the npm package:
 License
 =======
 
-one.color is licensed under a standard 3-clause BSD license -- see the LICENSE-file for details.
+one.color is licensed under a standard 2-clause BSD license -- see the LICENSE-file for details.
