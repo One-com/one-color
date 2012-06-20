@@ -23,7 +23,7 @@ function ONECOLOR (obj) {
     } else if (obj.charCodeAt) {
         var lowerCased = obj.toLowerCase();
         if (namedColors[lowerCased]) {
-            obj = namedColors[lowerCased];
+            obj = '#' + namedColors[lowerCased];
         }
         // Test for CSS rgb(....) string
         var matchCssSyntax = obj.match(cssColorRegExp);
@@ -210,7 +210,7 @@ if (typeof module !== 'undefined') {
     module.exports = ONECOLOR;
 } else {
     // Browser
-    one = one || {};
+    one = window.one || {};
     one.color = ONECOLOR;
 }
 
