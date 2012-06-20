@@ -276,7 +276,12 @@ alert(myColor.red() + ' ' + myColor.green() + ' ' + myColor.blue());
 Building
 ========
 
-The Makefile uses <a href="https://github.com/One-com/assetgraph">AssetGraph</a>.
+```
+git clone https://github.com/One-com/one-color.git
+cd one-color
+npm install
+make
+```
 
 If you aren't up for a complete installation, there are pre-built
 packages in the repository as well as the npm package:
