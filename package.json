@@ -3,7 +3,7 @@
     "description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
     "repository": "git@github.com:One-com/one-color.git",
     "version": "2.2.4",
-    "keywords": ["ender", "color", "colour"],
+    "keywords": ["ender", "color", "colour", "requirejs", "amd"],
     "maintainers": [
         {
             "name": "Peter Müller",
@@ -15,8 +15,8 @@
         }
     ],
     "devDependencies": {
-	"assetgraph": "=0.4.4",
-        "assetgraph-builder": "=0.3.3",
+        "assetgraph": "=0.4.35",
+        "assetgraph-builder": "=0.3.46",
         "optimist": "=0.3.1",
         "vows": "=0.6.1"
     },
@@ -32,6 +32,8 @@
     "main": "one-color-all-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
-        "prepublish": "make clean && make && vows"
+        "pretest": "npm install && make clean && make",
+        "test": "vows",
+        "prepublish": "npm test"
     }
 }
