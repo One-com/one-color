@@ -227,6 +227,12 @@ function createTest(bundleFileName) {
                 assert.isTrue(clr.equals(new Color[spaceName](0, 0, 0, 0)));
             };
         });
+        colorSpaces.forEach(function (item) {
+            context['JSON conversion'] = function (spaceName) {
+                var color = new Color[spaceName](Math.random(), Math.random(), Math.random(), Math.random(), Math.random());
+                assert.isTrue(color.equals(Color(color.toJSON())));
+            };
+        });
 
         var chans = {
             topic: new Color[space.name](0, 0, 0, 0)
