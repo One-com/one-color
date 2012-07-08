@@ -148,6 +148,7 @@ Color parser function, the recommended way to create a color instance:
 
 ```javascript
 one.color('#a9d91d') // Regular hex syntax
+one.color('a9d91d') // hex syntax, # is optional
 one.color('#eee') // Short hex syntax
 one.color('rgb(124, 96, 200)') // CSS rgb syntax
 one.color('rgb(99%, 40%, 0%)') // CSS rgb syntax with percentages
