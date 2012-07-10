@@ -539,7 +539,7 @@ ONECOLOR.installMethod('darken', function (amount) {
 });
 
 
-ONECOLOR.installMethod('saturate', function (amount) {
+ONECOLOR.installMethod('desaturate', function (amount) {
     return this.saturation(isNaN(amount) ? -0.1 : -amount, true);
 });
 
@@ -560,7 +560,7 @@ ONECOLOR.installMethod('lighten', function (amount) {
 
 ONECOLOR.installMethod('mix', function (otherColor, weight) {
     otherColor = ONECOLOR(otherColor).rgb();
-    weight = 1 - (weight || 0.5);
+    weight = 1 - (isNaN(weight) ? 0.5 : weight);
 
     var w = weight * 2 - 1,
         a = this._alpha - otherColor._alpha,
@@ -569,10 +569,10 @@ ONECOLOR.installMethod('mix', function (otherColor, weight) {
         rgb = this.rgb();
 
     return new ONECOLOR.RGB(
-        this._red * weight1 + otherColor._red * weight2,
-        this._green * weight1 + otherColor._green * weight2,
-        this._blue * weight1 + otherColor._blue * weight2,
-        this._alpha * weight + otherColor._alpha * (1 - weight)
+        rgb._red * weight1 + otherColor._red * weight2,
+        rgb._green * weight1 + otherColor._green * weight2,
+        rgb._blue * weight1 + otherColor._blue * weight2,
+        rgb._alpha * weight + otherColor._alpha * (1 - weight)
     );
 });
 
