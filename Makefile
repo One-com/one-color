@@ -7,7 +7,7 @@ ifneq ($(NPM_BINS),)
 endif
 
 jsfiles := $(shell find lib/ -type f -name "*.js")
-outputfiles := one-color-debug.js one-color.js one-color-all-debug.js one-color-all.js
+outputfiles := one-color-debug.js one-color.js one-color-all-debug.js one-color-all.js one-color-ieshim.js
 
 .PHONY : all clean
 
@@ -21,6 +21,9 @@ one-color-debug.js: $(jsfiles)
 
 one-color-all-debug.js: $(jsfiles)
 	flattenOneInclude lib/color/_all.js > $@
+
+one-color-ieshim.js: lib/es5-shim.js
+	cat $^ | uglifyjs -nc > $@
 
 doc: $(jsfiles)
 	mkdir -p doc

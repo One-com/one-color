@@ -13,6 +13,10 @@ JavaScript color calculation toolkit for node.js and the browser.
 * Seamless conversion between colorspaces
 * Outputs as hex, `rgb(...)`, `rgba(...)` or `hsv(...)`
 
+WARNING IE USERS:
+This library uses some modern ecmascript methods that aren't available in IE versions below IE9.
+To keep the core library small, these methods aren't polyfilled in the library itself.
+If you want IE support for older IE versions, please include <a href="//raw.github.com/One-com/one-color/master/one-color-ieshim.js">one-color-ieshim.js</a> before the color library. This is only needed if you don't already have a library installed that polyfills `Array.prototype.map`and `Array.prototype.forEach`.
 
 Usage
 -----
