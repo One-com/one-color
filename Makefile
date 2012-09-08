@@ -1,10 +1,5 @@
-# Put all 'bin' dirs beneath node_modules into $PATH so that we're using
-# the locally installed AssetGraph:
-# Ugly 'subst' hack: Check the Make Manual section 8.1 - Function Call Syntax
-NPM_BINS := $(subst bin node,bin:node,$(shell if test -d node_modules; then find node_modules/ -name bin -type d; fi))
-ifneq ($(NPM_BINS),)
-	PATH := ${NPM_BINS}:${PATH}
-endif
+# Add binaries from NPM modules to PATH
+PATH:=node_modules/.bin:${PATH}
 
 jsfiles := $(shell find lib/ -type f -name "*.js")
 outputfiles := one-color-debug.js one-color.js one-color-all-debug.js one-color-all.js one-color-ieshim.js
