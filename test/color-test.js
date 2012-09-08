@@ -236,7 +236,7 @@ function createTest(bundleFileName) {
 
         var chans = {
             topic: new Color[space.name](0, 0, 0, 0)
-        }
+        };
         space.channels.forEach(function(channel) {
             chans[channel + ' getter/setter existance'] = function (color) {
                 assert.isFunction(color[channel]);
@@ -284,4 +284,3 @@ vows.describe('Color').addBatch({
     'base, debug': createTest('../one-color-debug'),
     'base, minified': createTest('../one-color')
 }).export(module);
-
