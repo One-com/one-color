@@ -12,10 +12,10 @@ all: $(outputfiles)
 	./bin/build.js $< > $@
 
 one-color-debug.js: $(jsfiles)
-	flattenOneInclude lib/color/_base.js > $@
+	flattenOneInclude --parentdir lib/color/_base.js > $@
 
 one-color-all-debug.js: $(jsfiles)
-	flattenOneInclude lib/color/_all.js > $@
+	flattenOneInclude --parentdir lib/color/_all.js > $@
 
 one-color-ieshim.js: lib/es5-shim.js
 	cat $^ | uglifyjs -nc > $@
