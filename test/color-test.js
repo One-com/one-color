@@ -237,12 +237,20 @@ function createTest(bundleFileName) {
         var chans = {
             topic: new Color[space.name](0, 0, 0, 0)
         };
-        space.channels.forEach(function(channel) {
+        space.channels.forEach(function (channel) {
+            var shortHand = channel === 'black' ? 'k' : channel.charAt(0);
+
             chans[channel + ' getter/setter existance'] = function (color) {
                 assert.isFunction(color[channel]);
             };
+            chans[channel + ' getter/setter shorthand existance'] = function (color) {
+                assert.isFunction(color[shortHand]);
+            };
             chans[channel + ' getter'] = function (color) {
                 assert.equal(color[channel](), 0);
+            };
+            chans[channel + ' getter shorthand'] = function (color) {
+                assert.equal(color[shortHand](), 0);
             };
             chans[channel + ' setter'] = function (color) {
                 assert.equal(color[channel](0)[channel](), 0);
@@ -258,8 +266,25 @@ function createTest(bundleFileName) {
                     assert.equal(color[channel](1.1)[channel](), 1);
                 }
             };
+            chans[channel + ' setter shorthand'] = function (color) {
+                assert.equal(color[shortHand](0)[channel](), 0);
+                assert.equal(color[shortHand](0.5)[channel](), 0.5);
+                if (channel === 'hue') {
+                    // Hue is considered a circle, and thus has periodic boundary conditions
+                    assert.equal(color[shortHand](1)[channel](), 0);
+                    assert.equal(color[shortHand](-0.1)[channel](), 0.9);
+                    assert.equal(color[shortHand](1.5)[channel](), 0.5);
+                } else {
+                    assert.equal(color[shortHand](1)[channel](), 1);
+                    assert.equal(color[shortHand](-0.1)[channel](), 0);
+                    assert.equal(color[shortHand](1.1)[channel](), 1);
+                }
+            };
             chans[channel + ' adjustment'] = function (color) {
                 assert.equal(color[channel](0.5, true)[channel](), 0.5);
+            };
+            chans[channel + ' adjustment shorthand'] = function (color) {
+                assert.equal(color[shortHand](0.5, true)[channel](), 0.5);
             };
         });
         context['channels'] = chans;
