@@ -9,7 +9,7 @@ outputfiles := one-color-debug.js one-color.js one-color-all-debug.js one-color-
 all: $(outputfiles)
 
 %.js: %-debug.js
-	./bin/build.js $< > $@
+	./bin/build.js -o $@ $<
 
 one-color-debug.js: $(jsfiles)
 	flattenOneInclude --parentdir lib/color/_base.js > $@

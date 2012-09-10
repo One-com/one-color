@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var AssetGraph = require('assetgraph'),
+var fs = require('fs'),
+    AssetGraph = require('assetgraph'),
     commandLineOptions = require('optimist')
         .demand(1)
         .argv;
@@ -10,7 +11,19 @@ new AssetGraph()
     .pullGlobalsIntoVariables({type: 'JavaScript'}, {wrapInFunction: true})
     .compressJavaScript()
     .queue(function (assetGraph) {
-        console.log(assetGraph.findAssets()[0].text);
+        var text = assetGraph.findAssets()[0].text + "\n";
+        if (commandLineOptions.o) {
+            fs.writeFile(commandLineOptions.o, text, 'utf-8', function (err) {
+                if (err) {
+                    throw err;
+                }
+            });
+        } else {
+            console.log(text);
+        }
     })
-    .run();
-
+    .run(function (err) {
+        if (err) {
+            throw err;
+        }
+    });
