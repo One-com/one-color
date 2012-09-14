@@ -3,6 +3,7 @@ one.color
 
 JavaScript color calculation toolkit for node.js and the browser.
 
+Features:
 * RGB, HSV, HSL, and CMYK colorspace support (experimental implementations of LAB and XYZ)
 * Legal values for all channels are 0..1
 * Instances are immutable -- a new object is created for each manipulation
@@ -12,6 +13,16 @@ JavaScript color calculation toolkit for node.js and the browser.
 * Chainable color manipulation
 * Seamless conversion between colorspaces
 * Outputs as hex, `rgb(...)`, `rgba(...)` or `hsv(...)`
+
+Module support:
+* CommonJS / Node
+* AMD / RequireJS
+* jQuery (installs itself on $.color)
+* Vanilla JS (installs itself on one.color)
+
+Package managers:
+* npm: `npm install onecolor`
+* bower: `bower install color`
 
 WARNING IE USERS:
 This library uses some modern ecmascript methods that aren't available in IE versions below IE9.
