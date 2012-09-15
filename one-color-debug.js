@@ -197,7 +197,8 @@ ONECOLOR.installMethod = function (name, fn) {
 
 installColorSpace('RGB', ['r', 'g', 'b', 'a'], {
     hex: function () {
-        var hexString = (Math.round(255 * this._r) * 0x10000 + Math.round(255 * this._g) * 0x100 + Math.round(255 * this._b)).toString(16);
+        var that = this,
+            hexString = (Math.round(255 * that._r) * 0x10000 + Math.round(255 * that._g) * 0x100 + Math.round(255 * that._b)).toString(16);
         return '#' + ('00000'.substr(0, 6 - hexString.length)) + hexString;
     },
 
@@ -228,9 +229,10 @@ if (typeof module !== 'undefined') {
 
 installColorSpace('HSV', ['h', 's', 'v', 'a'], {
     rgb: function () {
-        var hue = this._h,
-            saturation = this._s,
-            value = this._v,
+        var that = this,
+            hue = that._h,
+            saturation = that._s,
+            value = that._v,
             i = Math.min(5, Math.floor(hue * 6)),
             f = hue * 6 - i,
             p = value * (1 - saturation),
@@ -271,12 +273,13 @@ installColorSpace('HSV', ['h', 's', 'v', 'a'], {
             blue = q;
             break;
         }
-        return new ONECOLOR.RGB(red, green, blue, this._a);
+        return new ONECOLOR.RGB(red, green, blue, that._a);
     },
 
     hsl: function () {
-        var l = (2 - this._s) * this._v,
-            sv = this._s * this._v,
+        var that = this,
+            l = (2 - that._s) * that._v,
+            sv = that._s * that._v,
             svDivisor = l <= 1 ? l : (2 - l),
             saturation;
 
@@ -286,13 +289,14 @@ installColorSpace('HSV', ['h', 's', 'v', 'a'], {
         } else {
             saturation = sv / svDivisor;
         }
-        return new ONECOLOR.HSL(this._h, saturation, l / 2, this._a);
+        return new ONECOLOR.HSL(that._h, saturation, l / 2, that._a);
     },
 
     fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
-        var red = this._r,
-            green = this._g,
-            blue = this._b,
+        var that = this,
+            red = that._r,
+            green = that._g,
+            blue = that._b,
             max = Math.max(red, green, blue),
             min = Math.min(red, green, blue),
             delta = max - min,
@@ -314,7 +318,7 @@ installColorSpace('HSV', ['h', 's', 'v', 'a'], {
                 break;
             }
         }
-        return new ONECOLOR.HSV(hue, saturation, value, this._a);
+        return new ONECOLOR.HSV(hue, saturation, value, that._a);
     }
 });
 
@@ -324,8 +328,9 @@ installColorSpace('HSV', ['h', 's', 'v', 'a'], {
 installColorSpace('HSL', ['h', 's', 'l', 'a'], {
     hsv: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var l = this._l * 2,
-            s = this._s * ((l <= 1) ? l : 2 - l),
+        var that = this,
+            l = that._l * 2,
+            s = that._s * ((l <= 1) ? l : 2 - l),
             saturation;
 
         // Avoid division by zero when l + s is very small (approaching black):
@@ -335,7 +340,7 @@ installColorSpace('HSL', ['h', 's', 'l', 'a'], {
             saturation = (2 * s) / (l + s);
         }
 
-        return new ONECOLOR.HSV(this._h, saturation, (l + s) / 2, this._a);
+        return new ONECOLOR.HSV(that._h, saturation, (l + s) / 2, that._a);
     },
 
     rgb: function () {
