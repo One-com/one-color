@@ -2,9 +2,6 @@
 /*global define*/
 var installedColorSpaces = [],
     namedColors = {},
-    undef = function (obj) {
-        return typeof obj === 'undefined';
-    },
     channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
     alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
     cssColorRegExp = new RegExp(
@@ -15,6 +12,10 @@ var installedColorSpaces = [],
                              channelRegExp.source +
                              "(?:," + alphaChannelRegExp.source + ")?" +
                          "\\)$", "i");
+
+function isUndefined(obj) {
+    return typeof obj === 'undefined';
+}
 
 function ONECOLOR(obj) {
     if (Object.prototype.toString.apply(obj) === '[object Array]') {
@@ -34,12 +35,12 @@ function ONECOLOR(obj) {
         var matchCssSyntax = obj.match(cssColorRegExp);
         if (matchCssSyntax) {
             var colorSpaceName = matchCssSyntax[1].toUpperCase(),
-                alpha = undef(matchCssSyntax[8]) ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8]),
+                alpha = isUndefined(matchCssSyntax[8]) ? matchCssSyntax[8] : parseFloat(matchCssSyntax[8]),
                 hasHue = colorSpaceName[0] === 'H',
                 firstChannelDivisor = matchCssSyntax[3] ? 100 : (hasHue ? 360 : 255),
                 secondChannelDivisor = (matchCssSyntax[5] || hasHue) ? 100 : 255,
                 thirdChannelDivisor = (matchCssSyntax[7] || hasHue) ? 100 : 255;
-            if (undef(ONECOLOR[colorSpaceName])) {
+            if (isUndefined(ONECOLOR[colorSpaceName])) {
                 throw new Error("one.color." + colorSpaceName + " is not installed.");
             }
             return new ONECOLOR[colorSpaceName](
@@ -81,15 +82,15 @@ function installColorSpace(colorSpaceName, propertyNames, config) {
             }).reverse().join("") +
         "}" +
         "if (" + propertyNames.filter(function (propertyName) {
-            return propertyName !== 'alpha';
+            return propertyName !== 'a';
         }).map(function (propertyName) {
             return "isNaN(" + propertyName + ")";
         }).join("||") + "){" + "throw new Error(\"[" + colorSpaceName + "]: Invalid color: (\"+" + propertyNames.join("+\",\"+") + "+\")\");}" +
         propertyNames.map(function (propertyName) {
-            if (propertyName === 'hue') {
-                return "this._hue=hue<0?hue-Math.floor(hue):hue%1"; // Wrap
-            } else if (propertyName === 'alpha') {
-                return "this._alpha=(isNaN(alpha)||alpha>1)?1:(alpha<0?0:alpha);";
+            if (propertyName === 'h') {
+                return "this._h=h<0?h-Math.floor(h):h%1"; // Wrap
+            } else if (propertyName === 'a') {
+                return "this._a=(isNaN(a)||a>1)?1:(a<0?0:a);";
             } else {
                 return "this._" + propertyName + "=" + propertyName + "<0?0:(" + propertyName + ">1?1:" + propertyName + ")";
             }
@@ -106,7 +107,7 @@ function installColorSpace(colorSpaceName, propertyNames, config) {
     prototype.isColor = true;
 
     prototype.equals = function (otherColor, epsilon) {
-        if (undef(epsilon)) {
+        if (isUndefined(epsilon)) {
             epsilon = 1e-10;
         }
 
@@ -150,18 +151,18 @@ function installColorSpace(colorSpaceName, propertyNames, config) {
 
     // Generate getters and setters
     propertyNames.forEach(function (propertyName, i) {
-        prototype[propertyName] = prototype[propertyName === 'black' ? 'k' : propertyName[0]] = new Function("value", "isDelta",
-            // Simple getter mode: color.red()
+        prototype[propertyName] = new Function("value", "isDelta",
+            // Simple getter mode: color.r()
             "if (typeof value === 'undefined') {" +
                 "return this._" + propertyName + ";" +
             "}" +
-            // Adjuster: color.red(+.2, true)
+            // Adjuster: color.r(+.2, true)
             "if (isDelta) {" +
                 "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
                     return "this._" + otherPropertyName + (propertyName === otherPropertyName ? "+value" : "");
                 }).join(", ") + ");" +
             "}" +
-            // Setter: color.red(.2);
+            // Setter: color.r(.2);
             "return new this.constructor(" + propertyNames.map(function (otherPropertyName, i) {
                 return propertyName === otherPropertyName ? "value" : "this._" + otherPropertyName;
             }).join(", ") + ");");
@@ -171,7 +172,7 @@ function installColorSpace(colorSpaceName, propertyNames, config) {
         var obj = {};
         obj[sourceColorSpaceName.toLowerCase()] = new Function("return this.rgb()." + sourceColorSpaceName.toLowerCase() + "();"); // Fallback
         ONECOLOR[sourceColorSpaceName].propertyNames.forEach(function (propertyName, i) {
-            obj[propertyName] = obj[propertyName === 'black' ? 'k' : propertyName[0]] = new Function("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
+            obj[propertyName] = new Function("value", "isDelta", "return this." + sourceColorSpaceName.toLowerCase() + "()." + propertyName + "(value, isDelta);");
         });
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop) && ONECOLOR[targetColorSpaceName].prototype[prop] === undefined) {
@@ -194,29 +195,29 @@ ONECOLOR.installMethod = function (name, fn) {
     });
 };
 
-installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
+installColorSpace('RGB', ['r', 'g', 'b', 'a'], {
     hex: function () {
-        var hexString = (Math.round(255 * this._red) * 0x10000 + Math.round(255 * this._green) * 0x100 + Math.round(255 * this._blue)).toString(16);
+        var hexString = (Math.round(255 * this._r) * 0x10000 + Math.round(255 * this._g) * 0x100 + Math.round(255 * this._b)).toString(16);
         return '#' + ('00000'.substr(0, 6 - hexString.length)) + hexString;
     },
 
     css: function () {
-        return "rgb(" + Math.round(255 * this._red) + "," + Math.round(255 * this._green) + "," + Math.round(255 * this._blue) + ")";
+        return "rgb(" + Math.round(255 * this._r) + "," + Math.round(255 * this._g) + "," + Math.round(255 * this._b) + ")";
     },
 
     cssa: function () {
-        return "rgba(" + Math.round(255 * this._red) + "," + Math.round(255 * this._green) + "," + Math.round(255 * this._blue) + "," + this._alpha + ")";
+        return "rgba(" + Math.round(255 * this._r) + "," + Math.round(255 * this._g) + "," + Math.round(255 * this._b) + "," + this._a + ")";
     }
 });
 
 if (typeof module !== 'undefined') {
     // Node module export
     module.exports = ONECOLOR;
-} else if (typeof define === 'function' && !undef(define.amd)) {
+} else if (typeof define === 'function' && !isUndefined(define.amd)) {
     define([], function () {
         return ONECOLOR;
     });
-} else if (typeof jQuery !== 'undefined' && undef(jQuery.color)) {
+} else if (typeof jQuery !== 'undefined' && isUndefined(jQuery.color)) {
     jQuery.color = ONECOLOR;
 } else {
     one = window.one || {};
@@ -376,11 +377,11 @@ namedColors = {
 
 /*global one*/
 
-installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
+installColorSpace('HSV', ['h', 's', 'v', 'a'], {
     rgb: function () {
-        var hue = this._hue,
-            saturation = this._saturation,
-            value = this._value,
+        var hue = this._h,
+            saturation = this._s,
+            value = this._v,
             i = Math.min(5, Math.floor(hue * 6)),
             f = hue * 6 - i,
             p = value * (1 - saturation),
@@ -421,12 +422,12 @@ installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
             blue = q;
             break;
         }
-        return new ONECOLOR.RGB(red, green, blue, this._alpha);
+        return new ONECOLOR.RGB(red, green, blue, this._a);
     },
 
     hsl: function () {
-        var l = (2 - this._saturation) * this._value,
-            sv = this._saturation * this._value,
+        var l = (2 - this._s) * this._v,
+            sv = this._s * this._v,
             svDivisor = l <= 1 ? l : (2 - l),
             saturation;
 
@@ -436,13 +437,13 @@ installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
         } else {
             saturation = sv / svDivisor;
         }
-        return new ONECOLOR.HSL(this._hue, saturation, l / 2, this._alpha);
+        return new ONECOLOR.HSL(this._h, saturation, l / 2, this._a);
     },
 
     fromRgb: function () { // Becomes one.color.RGB.prototype.hsv
-        var red = this._red,
-            green = this._green,
-            blue = this._blue,
+        var red = this._r,
+            green = this._g,
+            blue = this._b,
             max = Math.max(red, green, blue),
             min = Math.min(red, green, blue),
             delta = max - min,
@@ -464,18 +465,18 @@ installColorSpace('HSV', ['hue', 'saturation', 'value', 'alpha'], {
                 break;
             }
         }
-        return new ONECOLOR.HSV(hue, saturation, value, this._alpha);
+        return new ONECOLOR.HSV(hue, saturation, value, this._a);
     }
 });
 
 /*global one*/
 
 
-installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
+installColorSpace('HSL', ['h', 's', 'l', 'a'], {
     hsv: function () {
         // Algorithm adapted from http://wiki.secondlife.com/wiki/Color_conversion_scripts
-        var l = this._lightness * 2,
-            s = this._saturation * ((l <= 1) ? l : 2 - l),
+        var l = this._l * 2,
+            s = this._s * ((l <= 1) ? l : 2 - l),
             saturation;
 
         // Avoid division by zero when l + s is very small (approaching black):
@@ -485,7 +486,7 @@ installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
             saturation = (2 * s) / (l + s);
         }
 
-        return new ONECOLOR.HSV(this._hue, saturation, (l + s) / 2, this._alpha);
+        return new ONECOLOR.HSV(this._h, saturation, (l + s) / 2, this._a);
     },
 
     rgb: function () {
@@ -499,19 +500,19 @@ installColorSpace('HSL', ['hue', 'saturation', 'lightness', 'alpha'], {
 
 /*global one*/
 
-installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
+installColorSpace('CMYK', ['c', 'm', 'y', 'k', 'a'], {
     rgb: function () {
-        return new ONECOLOR.RGB((1 - this._cyan * (1 - this._black) - this._black),
-                                 (1 - this._magenta * (1 - this._black) - this._black),
-                                 (1 - this._yellow * (1 - this._black) - this._black),
-                                 this._alpha);
+        return new ONECOLOR.RGB((1 - this._c * (1 - this._b) - this._b),
+                                 (1 - this._m * (1 - this._b) - this._b),
+                                 (1 - this._y * (1 - this._b) - this._b),
+                                 this._a);
     },
 
     fromRgb: function () { // Becomes one.color.RGB.prototype.cmyk
         // Adapted from http://www.javascripter.net/faq/rgb2cmyk.htm
-        var red = this._red,
-            green = this._green,
-            blue = this._blue,
+        var red = this._r,
+            green = this._g,
+            blue = this._b,
             cyan = 1 - red,
             magenta = 1 - green,
             yellow = 1 - blue,
@@ -524,7 +525,7 @@ installColorSpace('CMYK', ['cyan', 'magenta', 'yellow', 'black', 'alpha'], {
         } else {
             black = 1;
         }
-        return new ONECOLOR.CMYK(cyan, magenta, yellow, black, this._alpha);
+        return new ONECOLOR.CMYK(cyan, magenta, yellow, black, this._a);
     }
 });
 
