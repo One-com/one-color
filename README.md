@@ -38,7 +38,7 @@ named color support):
 ```html
 <script src='one-color.js'></script>
 <script>
-    alert('Hello, ' + one.color('#650042').lightness(.3).green(.4).hex() + ' world!');
+    alert('Hello, ' + one.color('#650042').l(.3).g(.4).h() + ' world!');
 </script>
 ```
 
@@ -46,7 +46,7 @@ In node.js (after `npm install onecolor`):
 
 ```javascript
 var color = require('onecolor');
-console.warn(color('rgba(100%, 0%, 0%, .5)').alpha(.4).cssa()); // 'rgba(255,0,0,0.4)'
+console.warn(color('rgba(100%, 0%, 0%, .5)').a(.4).cssa()); // 'rgba(255,0,0,0.4)'
 ```
 
 `one.color` is the parser. All of the above return color instances in
@@ -56,7 +56,7 @@ variables:
 ```javascript
 var myColor = one.color('#a9d91d');
 myColor instanceof one.color.RGB; // true
-myColor.red() // 0.6627450980392157
+myColor.r() // 0.6627450980392157
 ```
 
 You can also parse named CSS colors (works out of the box in node.js,
@@ -64,7 +64,7 @@ but the requires the slightly bigger <a href="//raw.github.com/One-com/one-color
 browser):
 
 ```javascript
-one.color('maroon').lightness(.3).hex() // '#990000'
+one.color('maroon').l(.3).hex() // '#990000'
 ```
 
 To turn a color instance back into a string, use the `hex()`, `css()`,
@@ -76,23 +76,23 @@ one.color('#bb7b81').cssa() // 'rgba(187,123,129,1)'
 ```
 
 Color instances have getters/setters for all channels in all supported
-colorspaces (`red()`, `green()`, `blue()`, `hue()`, `saturation()`, `lightness()`,
-`value()`, `alpha()`, etc.). Thus you don't need to think about which colorspace
+colorspaces (`r()`, `g()`, `b()`, `h()`, `s()`, `l()`,
+`v()`, `a()`, etc.). Thus you don't need to think about which colorspace
 you're in. All the necessary conversions happen automatically:
 
 ```javascript
 one.color('#ff0000') // Red in RGB
-    .green(1) // Set green to the max value, producing yellow (still RGB)
-    .hue(.5, true) // Add 180 degrees to the hue, implicitly converting to HSV
-    .hex() // Dump as RGB hex syntax: '#2222ff'
+    .g(1) // Set green to the max value, producing yellow (still RGB)
+    .h(.5, true) // Add 180 degrees to the hue, implicitly converting to HSV
+    .h() // Dump as RGB hex syntax: '#2222ff'
 ```
 
 When called without any arguments, they return the current value of
 the channel (0..1):
 
 ```javascript
-one.color('#09ffdd').green() // 1
-one.color('#09ffdd').saturation() // 0.9647058823529412
+one.color('#09ffdd').g() // 1
+one.color('#09ffdd').s() // 0.9647058823529412
 ```
 
 When called with a single numerical argument (0..1), a new color
@@ -100,10 +100,10 @@ object is returned with that channel replaced:
 
 ```javascript
 var myColor = one.color('#00ddff');
-myColor.red(.5).red() // .5
+myColor.r(.5).r() // .5
 
 // ... but as the objects are immutable, the original object retains its value:
-myColor.red() // 0
+myColor.r() // 0
 ```
 
 When called with a single numerical argument (0..1) and `true` as
@@ -112,7 +112,7 @@ adjusted:
 
 ```javascript
 one.color('#ff0000') // Red
-    .red(-.1, true) // Adjust red channel by -0.1
+    .r(-.1, true) // Adjust red channel by -0.1
     .hex() // '#e60000'
 ```
 
@@ -126,9 +126,9 @@ It's preserved when converting between colorspaces:
 
 ```javascript
 one.color('rgba(10, 20, 30, .8)')
-    .green(.4)
-    .saturation(.2)
-    .alpha() // 0.8
+    .g(.4)
+    .s(.2)
+    .a() // 0.8
 ```
 
 Comparing color objects
@@ -138,15 +138,15 @@ If you need to know whether two colors represent the same 8 bit color, regardles
 of colorspace, compare their `hex()` values:
 
 ```javascript
-one.color('#f00').hex() === one.color('#e00').red(1).hex() // true
+one.color('#f00').hex() === one.color('#e00').r(1).hex() // true
 ```
 
 Use the `equals` method to compare two color instances within a certain
 epsilon (defaults to `1e-9`).
 
 ```javascript
-one.color('#e00').lightness(.00001, true).equals(one.color('#e00'), 1e-5) // false
-one.color('#e00').lightness(.000001, true).equals(one.color('#e00'), 1e-5) // true
+one.color('#e00').l(.00001, true).equals(one.color('#e00'), 1e-5) // false
+one.color('#e00').l(.000001, true).equals(one.color('#e00'), 1e-5) // true
 ```
 
 Before comparing the `equals` method converts the other color to the right colorspace,
@@ -204,53 +204,53 @@ color.toJSON() // ["RGB"|"HSV"|"HSL", <number>, <number>, <number>, <number>]
 Getters -- return the value of the channel (converts to other colorspaces as needed):
 
 ```javascript
-color.red()
-color.green()
-color.blue()
-color.hue()
-color.saturation()
-color.value()
-color.lightness()
-color.alpha()
-color.cyan()    // one-color-all.js and node.js only
-color.magenta() // one-color-all.js and node.js only
-color.yellow()  // one-color-all.js and node.js only
-color.black()   // one-color-all.js and node.js only
+color.r()
+color.g()
+color.b()
+color.h()
+color.s()
+color.v()
+color.l()
+color.a()
+color.c() // one-color-all.js and node.js only
+color.m() // one-color-all.js and node.js only
+color.y() // one-color-all.js and node.js only
+color.k() // one-color-all.js and node.js only
 ```
 
 Setters -- return new color instances with one channel changed:
 
 ```javascript
-color.red(<number>)
-color.green(<number>)
-color.blue(<number>)
-color.hue(<number>)
-color.saturation(<number>)
-color.value(<number>)
-color.lightness(<number>)
-color.alpha(<number>)
-color.cyan(<number>)    // one-color-all.js and node.js only
-color.magenta(<number>) // one-color-all.js and node.js only
-color.yellow(<number>)  // one-color-all.js and node.js only
-color.black(<number>)   // one-color-all.js and node.js only
+color.r(<number>)
+color.g(<number>)
+color.b(<number>)
+color.h(<number>)
+color.s(<number>)
+color.v(<number>)
+color.l(<number>)
+color.a(<number>)
+color.c(<number>) // one-color-all.js and node.js only
+color.m(<number>) // one-color-all.js and node.js only
+color.y(<number>) // one-color-all.js and node.js only
+color.b(<number>) // one-color-all.js and node.js only
 ```
 
 Adjusters -- return new color instances with the channel adjusted by
 the specified delta (0..1):
 
 ```javascript
-color.red(<number>, true)
-color.green(<number>, true)
-color.blue(<number>, true)
-color.hue(<number>, true)
-color.saturation(<number>, true)
-color.value(<number>, true)
-color.lightness(<number>, true)
-color.alpha(<number>, true)
-color.cyan(<number>, true)    // one-color-all.js and node.js only
-color.magenta(<number>, true) // one-color-all.js and node.js only
-color.yellow(<number>, true)  // one-color-all.js and node.js only
-color.black(<number>, true)   // one-color-all.js and node.js only
+color.r(<number>, true)
+color.g(<number>, true)
+color.b(<number>, true)
+color.h(<number>, true)
+color.s(<number>, true)
+color.v(<number>, true)
+color.l(<number>, true)
+color.a(<number>, true)
+color.c(<number>, true) // one-color-all.js and node.js only
+color.m(<number>, true) // one-color-all.js and node.js only
+color.y(<number>, true) // one-color-all.js and node.js only
+color.k(<number>, true) // one-color-all.js and node.js only
 ```
 Comparison with other color objects, returns `true` or `false` (epsilon defaults to `1e-9`):
 
@@ -284,9 +284,9 @@ specific colorspace, do an explicit conversion first to cut down on
 the number of implicit conversions:
 
 ```javascript
-var myColor = one.color('#0620ff').lightness(+.3).rgb();
+var myColor = one.color('#0620ff').l(+.3).rgb();
 // Alerts '0 0.06265060240963878 0.5999999999999999':
-alert(myColor.red() + ' ' + myColor.green() + ' ' + myColor.blue());
+alert(myColor.r() + ' ' + myColor.g() + ' ' + myColor.b());
 ```
 
 Building

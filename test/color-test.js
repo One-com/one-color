@@ -3,19 +3,19 @@ var vows = require('vows'),
     spaces = [
         {
             name: 'RGB',
-            channels: ['red', 'green', 'blue', 'alpha']
+            channels: ['r', 'g', 'b', 'a']
         },
         {
             name: 'HSV',
-            channels: ['hue', 'saturation', 'value', 'alpha']
+            channels: ['h', 's', 'v', 'a']
         },
         {
             name: 'HSL',
-            channels: ['hue', 'saturation', 'lightness', 'alpha']
+            channels: ['h', 's', 'l', 'a']
         }/*,
         {
             name: 'CMYK',
-            channels: ['cyan', 'magenta', 'yellow', 'black', 'alpha']
+            channels: ['c', 'm', 'y', 'k', 'a']
         }*/
     ];
 
@@ -255,7 +255,7 @@ function createTest(bundleFileName) {
             chans[channel + ' setter'] = function (color) {
                 assert.equal(color[channel](0)[channel](), 0);
                 assert.equal(color[channel](0.5)[channel](), 0.5);
-                if (channel === 'hue') {
+                if (channel === 'h') {
                     // Hue is considered a circle, and thus has periodic boundary conditions
                     assert.equal(color[channel](1)[channel](), 0);
                     assert.equal(color[channel](-0.1)[channel](), 0.9);
@@ -269,7 +269,7 @@ function createTest(bundleFileName) {
             chans[channel + ' setter shorthand'] = function (color) {
                 assert.equal(color[shortHand](0)[channel](), 0);
                 assert.equal(color[shortHand](0.5)[channel](), 0.5);
-                if (channel === 'hue') {
+                if (channel === 'h') {
                     // Hue is considered a circle, and thus has periodic boundary conditions
                     assert.equal(color[shortHand](1)[channel](), 0);
                     assert.equal(color[shortHand](-0.1)[channel](), 0.9);
