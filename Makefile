@@ -20,10 +20,5 @@ one-color-all-debug.js: $(jsfiles)
 one-color-ieshim.js: lib/es5-shim.js
 	cat $^ | uglifyjs -nc > $@
 
-doc: $(jsfiles)
-	mkdir -p doc
-	jsdoc.sh --directory=doc/api -a -p lib
-
 clean:
 	rm -f $(outputfiles)
-	rm -rf doc
