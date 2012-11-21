@@ -18,7 +18,8 @@
         "assetgraph": "=1.0.1",
         "assetgraph-builder": "=1.0.3",
         "optimist": "=0.3.1",
-        "vows": "=0.6.1"
+        "vows": "=0.6.1",
+        "jamjs": "*"
     },
     "engines": {
         "node": ">=0.4.8"
@@ -34,12 +35,15 @@
     "scripts": {
         "pretest": "npm install && make clean && make",
         "test": "vows",
-        "prepublish": "npm test"
+        "prepublish": "npm test",
+        "postpublish": "jam publish"
     },
     "jam": {
         "main": "one-color-all.js",
         "include": [
+            "one-color.js",
             "one-color-all.js",
+            "one-color-ieshim.js",
             "README.md",
             "LICENSE"
         ]
