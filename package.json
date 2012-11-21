@@ -35,5 +35,13 @@
         "pretest": "npm install && make clean && make",
         "test": "vows",
         "prepublish": "npm test"
+    },
+    "jam": {
+        "main": "one-color-all.js",
+        "include": [
+            "one-color-all.js",
+            "README.md",
+            "LICENSE"
+        ]
     }
 }
