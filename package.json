@@ -33,7 +33,6 @@
     "main": "one-color-all-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
-        "pretest": "npm install && make clean && make",
         "test": "vows",
         "prepublish": "npm test",
         "postpublish": "jam publish"
