@@ -33,8 +33,6 @@
     "main": "one-color-all-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
-        "test": "vows",
-        "prepublish": "npm test",
         "postpublish": "jam publish"
     },
     "jam": {
