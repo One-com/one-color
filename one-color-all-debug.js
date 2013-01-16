@@ -99,7 +99,7 @@ function installColorSpace(colorSpaceName, propertyNames, config) {
 
     var prototype = ONECOLOR[colorSpaceName].prototype;
 
-    ['valueOf', 'hex', 'css', 'cssa'].forEach(function (methodName) {
+    ['valueOf', 'hex', 'hexa', 'css', 'cssa'].forEach(function (methodName) {
         prototype[methodName] = prototype[methodName] || (colorSpaceName === 'RGB' ? prototype.hex : new Function("return this.rgb()." + methodName + "();"));
     });
 
@@ -198,6 +198,11 @@ installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
     hex: function () {
         var hexString = (Math.round(255 * this._red) * 0x10000 + Math.round(255 * this._green) * 0x100 + Math.round(255 * this._blue)).toString(16);
         return '#' + ('00000'.substr(0, 6 - hexString.length)) + hexString;
+    },
+
+    hexa: function () {
+        var alphaString = Math.round(this._alpha * 255).toString(16);
+        return '#' + '00'.substr(0, 2 - alphaString.length) + alphaString + this.hex().substr(1, 6);
     },
 
     css: function () {
