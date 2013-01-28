@@ -18,12 +18,12 @@ var installedColorSpaces = [],
 
 function ONECOLOR(obj) {
     if (Object.prototype.toString.apply(obj) === '[object Array]') {
-        if (obj.length === 4) {
+        if (typeof obj[0] === 'string' && typeof ONECOLOR[obj[0]] === 'function') {
+            // Assumed array from .toJSON()
+            return new ONECOLOR[obj[0]](obj.slice(1, obj.length));
+        } else if (obj.length === 4) {
             // Assumed 4 element int RGB array from canvas with all channels [0;255]
             return new ONECOLOR.RGB(obj[0] / 255, obj[1] / 255, obj[2] / 255, obj[3] / 255);
-        } else {
-            // Assumed destringified array from one.color.JSON()
-            return new ONECOLOR[obj[0]](obj.slice(1, obj.length));
         }
     } else if (typeof obj === 'string') {
         var lowerCased = obj.toLowerCase();
