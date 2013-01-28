@@ -33,7 +33,7 @@
     "main": "one-color-all-debug.js",
     "ender": "lib/ender.js",
     "scripts": {
-        "postpublish": "./node_modules/.bin/jam publish"
+        "postpublish": "jam publish"
     },
     "jam": {
         "main": "one-color-all.js",
