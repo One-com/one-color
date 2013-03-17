@@ -30,6 +30,9 @@ function ONECOLOR(obj) {
         if (namedColors[lowerCased]) {
             obj = '#' + namedColors[lowerCased];
         }
+        if (lowerCased === 'transparent') {
+            obj = 'rgba(0,0,0,0)';
+        }
         // Test for CSS rgb(....) string
         var matchCssSyntax = obj.match(cssColorRegExp);
         if (matchCssSyntax) {
@@ -65,9 +68,6 @@ function ONECOLOR(obj) {
         }
     } else if (typeof obj === 'object' && obj.isColor) {
         return obj;
-    } else if (!isNaN(obj)) {
-        // Strange integer representation sometimes returned by document.queryCommandValue in some browser...
-        return new ONECOLOR.RGB((obj & 0xFF) / 255, ((obj & 0xFF00) >> 8) / 255, ((obj & 0xFF0000) >> 16) / 255);
     }
     return false;
 }
