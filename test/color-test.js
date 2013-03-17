@@ -12,11 +12,7 @@ var vows = require('vows'),
         {
             name: 'HSL',
             channels: ['hue', 'saturation', 'lightness', 'alpha']
-        }/*,
-        {
-            name: 'CMYK',
-            channels: ['cyan', 'magenta', 'yellow', 'black', 'alpha']
-        }*/
+        }
     ];
 
 var namedColorSamples = {
@@ -304,8 +300,27 @@ function createTest(bundleFileName) {
 }
 
 vows.describe('Color').addBatch({
-    'all, debug': createTest('../one-color-all-debug'),
-    'all, minified': createTest('../one-color-all'),
     'base, debug': createTest('../one-color-debug'),
     'base, minified': createTest('../one-color')
+}).export(module);
+
+
+spaces.push(
+    {
+        name: 'XYZ',
+        channels: ['x', 'y', 'z', 'alpha']
+    },
+    {
+        name: 'LAB',
+        channels: ['l', 'a', 'b', 'alpha']
+    }/*
+        name: 'CMYK',
+        channels: ['cyan', 'magenta', 'yellow', 'black', 'alpha']
+    }*/
+);
+
+
+vows.describe('Color-all').addBatch({
+    'all, debug': createTest('../one-color-all-debug'),
+    'all, minified': createTest('../one-color-all')
 }).export(module);
