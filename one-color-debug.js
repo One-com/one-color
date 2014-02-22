@@ -221,11 +221,13 @@ if (typeof module !== 'undefined') {
     define([], function () {
         return ONECOLOR;
     });
-} else if (typeof jQuery !== 'undefined' && undef(jQuery.color)) {
-    jQuery.color = ONECOLOR;
 } else {
     one = window.one || {};
     one.color = ONECOLOR;
+}
+
+if (typeof jQuery !== 'undefined' && undef(jQuery.color)) {
+    jQuery.color = ONECOLOR;
 }
 
 /*global one*/
