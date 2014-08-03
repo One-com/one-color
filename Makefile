@@ -18,7 +18,7 @@ one-color-all-debug.js: $(jsfiles)
 	flattenOneInclude --parentdir lib/color/_all.js > $@
 
 one-color-ieshim.js: lib/es5-shim.js
-	cat $^ | uglifyjs -nc > $@
+	cat $^ | node_modules/.bin/uglifyjs -nc > $@
 
 clean:
 	rm -f $(outputfiles)
