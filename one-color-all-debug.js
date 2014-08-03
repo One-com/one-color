@@ -213,14 +213,13 @@ installColorSpace('RGB', ['red', 'green', 'blue', 'alpha'], {
         return "rgba(" + Math.round(255 * this._red) + "," + Math.round(255 * this._green) + "," + Math.round(255 * this._blue) + "," + this._alpha + ")";
     }
 });
-
-if (typeof module !== 'undefined') {
-    // Node module export
-    module.exports = ONECOLOR;
-} else if (typeof define === 'function' && !undef(define.amd)) {
-    define([], function () {
+if (typeof define === 'function' && !undef(define.amd)) {
+    define(function () {
         return ONECOLOR;
     });
+} else if (typeof exports === 'object') {
+    // Node module export
+    module.exports = ONECOLOR;
 } else {
     one = window.one || {};
     one.color = ONECOLOR;
