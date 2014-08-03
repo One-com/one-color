@@ -35,8 +35,8 @@ vows.describe('Color').addBatch({
 }).export(module);
 */
 spaces.push(
-    'cmyk',
-    'xyz'/*,
+    'cmyk'/*,
+    'xyz',
     'lab'*/
 );
 
