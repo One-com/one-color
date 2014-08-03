@@ -29,9 +29,13 @@
   "engines": {
     "node": ">=0.4.8"
   },
-  "directories": {
-    "lib": "./lib"
-  },
+  "files": [
+    "one-color-all-debug.js",
+    "one-color-all.js",
+    "one-color-debug.js",
+    "one-color.js",
+    "one-color-ieshim.js"
+  ],
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
   },
