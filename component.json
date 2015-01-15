@@ -1,6 +1,6 @@
 {
 	"name": "color",
-	"version": "2.4.2",
+	"version": "2.5.0",
 	"main": [
 		"one-color.js",
 		"one-color-all.js",

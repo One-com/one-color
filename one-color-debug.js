@@ -6,6 +6,7 @@ var installedColorSpaces = [],
         return typeof obj === 'undefined';
     },
     channelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)(%)?\s*/,
+    percentageChannelRegExp = /\s*(\.\d+|100|\d?\d(?:\.\d+)?)%\s*/,
     alphaChannelRegExp = /\s*(\.\d+|\d+(?:\.\d+)?)\s*/,
     cssColorRegExp = new RegExp(
                          "^(rgb|hsl|hsv)a?" +
@@ -65,6 +66,26 @@ function ONECOLOR(obj) {
                 parseInt(hexMatch[2], 16) / 255,
                 parseInt(hexMatch[3], 16) / 255
             );
+        }
+
+        // No match so far. Lets try the less likely ones
+        if (ONECOLOR.CMYK) {
+            var cmykMatch = obj.match(new RegExp(
+                             "^cmyk" +
+                             "\\(" +
+                                 percentageChannelRegExp.source + "," +
+                                 percentageChannelRegExp.source + "," +
+                                 percentageChannelRegExp.source + "," +
+                                 percentageChannelRegExp.source +
+                             "\\)$", "i"));
+            if (cmykMatch) {
+                return new ONECOLOR.CMYK(
+                    parseFloat(cmykMatch[1]) / 100,
+                    parseFloat(cmykMatch[2]) / 100,
+                    parseFloat(cmykMatch[3]) / 100,
+                    parseFloat(cmykMatch[4]) / 100
+                );
+            }
         }
     } else if (typeof obj === 'object' && obj.isColor) {
         return obj;
