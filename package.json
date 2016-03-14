@@ -45,7 +45,7 @@
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
     "preversion": "npm run build && npm test",
-    "test": "vows",
+    "test": "mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
     "travis": "npm run build && npm run coverage"
   },
