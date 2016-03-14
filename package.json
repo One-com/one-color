@@ -4,11 +4,13 @@
   "repository": "git@github.com:One-com/one-color.git",
   "version": "2.5.0",
   "keywords": [
-    "ender",
     "color",
     "colour",
-    "requirejs",
-    "amd"
+    "conversion",
+    "rgb",
+    "hsv",
+    "hsl",
+    "cmyk"
   ],
   "maintainers": [
     {
