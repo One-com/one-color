@@ -16,27 +16,22 @@
       "email": "munter@fumle.dk"
     },
     {
-      "name": "Andreas Lind Petersen",
+      "name": "Andreas Lind",
       "email": "andreas@one.com"
     }
   ],
   "devDependencies": {
-    "assetgraph": "=1.0.1",
-    "assetgraph-builder": "=1.0.3",
-    "jamjs": "=0.2.17",
+    "browserify": "13.0.0",
+    "exorcist": "0.4.0",
     "optimist": "=0.3.1",
-    "uglify-js": "=2.4.15",
-    "vows": "=0.7.0"
+    "uglifyify": "3.0.1"
   },
   "engines": {
     "node": ">=0.4.8"
   },
   "files": [
-    "one-color-all-debug.js",
     "one-color-all.js",
-    "one-color-debug.js",
-    "one-color.js",
-    "one-color-ieshim.js"
+    "one-color.js"
   ],
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
@@ -44,7 +39,8 @@
   "main": "one-color-all-debug.js",
   "ender": "lib/ender.js",
   "scripts": {
-    "postpublish": "jam publish",
+    "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
+    "preversion": "npm run build && npm test",
     "test": "vows"
   },
   "jam": {
@@ -56,5 +52,9 @@
       "README.md",
       "LICENSE"
     ]
+  },
+  "dependencies": {
+    "browserify": "13.0.0",
+    "bundle-collapser": "1.2.1"
   }
 }
