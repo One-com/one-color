@@ -22,8 +22,11 @@
   ],
   "devDependencies": {
     "browserify": "13.0.0",
+    "coveralls": "2.11.8",
     "exorcist": "0.4.0",
+    "istanbul": "0.4.2",
     "mocha": "2.4.5",
+    "mocha-lcov-reporter": "1.2.0",
     "uglifyify": "3.0.1",
     "unexpected": "10.10.8"
   },
@@ -42,7 +45,9 @@
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
     "preversion": "npm run build && npm test",
-    "test": "vows"
+    "test": "vows",
+    "coverage": "istanbul cover _mocha -- --reporter dot",
+    "travis": "npm run build && npm run coverage"
   },
   "jam": {
     "main": "one-color-all.js",

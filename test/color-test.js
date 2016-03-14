@@ -1,5 +1,5 @@
 var expect = require('unexpected');
-var color = require('../one-color-all');
+var color = require('../');
 var namedColorSamples = require('./samples');
 
 var spaces = [
