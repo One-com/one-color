@@ -35,29 +35,21 @@
     "node": ">=0.4.8"
   },
   "files": [
+    "one-color.js",
+    "one-color.map",
     "one-color-all.js",
-    "one-color.js"
+    "one-color-all.map",
+    "index.js",
+    "minimal.js",
+    "lib"
   ],
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
   },
-  "main": "one-color-all-debug.js",
-  "ender": "lib/ender.js",
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
     "preversion": "npm run build && npm test",
     "test": "mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
     "travis": "npm run build && npm run coverage"
-  },
-  "jam": {
-    "main": "one-color-all.js",
-    "include": [
-      "one-color.js",
-      "one-color-all.js",
-      "one-color-ieshim.js",
-      "README.md",
-      "LICENSE"
-    ]
-  }
-}
+  }}
