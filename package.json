@@ -22,6 +22,7 @@
   ],
   "devDependencies": {
     "browserify": "13.0.0",
+    "bundle-collapser": "1.2.1",
     "coveralls": "2.11.8",
     "exorcist": "0.4.0",
     "istanbul": "0.4.2",
@@ -58,9 +59,5 @@
       "README.md",
       "LICENSE"
     ]
-  },
-  "dependencies": {
-    "browserify": "13.0.0",
-    "bundle-collapser": "1.2.1"
   }
 }
