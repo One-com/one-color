@@ -302,12 +302,10 @@ make
 If you aren't up for a complete installation, there are pre-built
 packages in the repository as well as the npm package:
 
-* Basic library: <a href="//raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>,
-  debuggable version: <a href="//raw.github.com/One-com/one-color/master/one-color-debug.js">one-color-debug.js</a>
-* Full library including named color support: <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a>,
-  debuggable version: <a href="//raw.github.com/One-com/one-color/master/one-color-all-debug.js">one-color-all-debug.js</a>.
+* Basic library: <a href="//raw.github.com/One-com/one-color/master/one-color.js">one-color.js</a>
+* Full library including named color support: <a href="//raw.github.com/One-com/one-color/master/one-color-all.js">one-color-all.js</a>
 
 License
 =======
 
-one.color is licensed under a standard 2-clause BSD license -- see the LICENSE-file for details.
+one.color is licensed under a standard 2-clause BSD license -- see the `LICENSE` file for details.
