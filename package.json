@@ -54,4 +54,11 @@
     "test": "mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
     "travis": "npm run build && npm run coverage"
-  }}
+  },
+  "jspm": {
+    "dependencies": {},
+    "main": "one-color-all.js",
+    "jspmPackage": true
+  }
+
+}
