@@ -1,5 +1,9 @@
 one.color
 =========
+[![NPM version](https://badge.fury.io/js/one-color.svg)](http://badge.fury.io/js/one-color)
+[![Build Status](https://travis-ci.org/one-com/one-color.svg?branch=master)](https://travis-ci.org/one-com/one-color)
+[![Coverage Status](https://img.shields.io/coveralls/one-com/one-color.svg)](https://coveralls.io/r/one-com/one-color?branch=master)
+[![Dependency Status](https://david-dm.org/one-com/one-color.svg)](https://david-dm.org/one-com/one-color)
 
 JavaScript color calculation toolkit for node.js and the browser.
 
