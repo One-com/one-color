@@ -23,8 +23,9 @@
   "devDependencies": {
     "browserify": "13.0.0",
     "exorcist": "0.4.0",
-    "optimist": "=0.3.1",
-    "uglifyify": "3.0.1"
+    "mocha": "2.4.5",
+    "uglifyify": "3.0.1",
+    "unexpected": "10.10.8"
   },
   "engines": {
     "node": ">=0.4.8"
