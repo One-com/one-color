@@ -2,7 +2,7 @@
   "name": "onecolor",
   "description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
   "repository": "git@github.com:One-com/one-color.git",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "keywords": [
     "color",
     "colour",
@@ -60,5 +60,4 @@
     "main": "one-color-all.js",
     "jspmPackage": true
   }
-
 }
