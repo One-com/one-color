@@ -25,14 +25,14 @@
   "devDependencies": {
     "browserify": "13.0.0",
     "bundle-collapser": "1.2.1",
-    "coveralls": "2.11.8",
+    "coveralls": "2.11.9",
     "exorcist": "0.4.0",
     "istanbul": "0.4.2",
     "jshint": "^2.9.1",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
     "uglifyify": "3.0.1",
-    "unexpected": "10.10.8"
+    "unexpected": "10.11.1"
   },
   "engines": {
     "node": ">=0.4.8"
