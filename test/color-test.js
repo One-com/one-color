@@ -47,7 +47,7 @@ spaces.forEach(function (colorSpace) {
             expect(color[spaceName], 'to be a function');
         });
 
-        var clr = colorSpace.name === 'CMYK' ? new color[spaceName](1, 1, 1, 1, 1) : new color[spaceName](0, 0, 0, 1);;
+        var clr = colorSpace.name === 'CMYK' ? new color[spaceName](1, 1, 1, 1, 1) : new color[spaceName](0, 0, 0, 1);
 
         it('should be constructed correctly', function () {
             expect(clr, 'to satisfy', {
@@ -79,7 +79,7 @@ spaces.forEach(function (colorSpace) {
 
                     // Awaiting unexpected patch
                     // expect(clr[otherSpace.name.toLowerCase()](), 'to exhaustively satisfy', expected);
-                })
+                });
             });
         });
 
@@ -87,7 +87,7 @@ spaces.forEach(function (colorSpace) {
             it('should have an equals method', function () {
                 expect(clr, 'to satisfy', {
                     equals: expect.it('to be a function').and('to have arity', 2)
-                })
+                });
             });
 
             spaces.forEach(function (otherSpace) {
