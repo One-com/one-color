@@ -51,7 +51,7 @@
   },
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
-    "preversion": "npm run lint && npm run build && npm test",
+    "preversion": "npm run lint && npm run build && npm test && git add one-color{-all,}{js,map}",
     "lint": "jshint .",
     "test": "npm run lint && mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
