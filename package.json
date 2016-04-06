@@ -26,12 +26,11 @@
     "browserify": "13.0.0",
     "bundle-collapser": "1.2.1",
     "coveralls": "2.11.9",
-    "exorcist": "0.4.0",
     "istanbul": "0.4.2",
     "jshint": "^2.9.1",
+    "minifyify": "7.3.2",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
-    "uglifyify": "3.0.1",
     "unexpected": "10.11.1"
   },
   "engines": {
@@ -50,7 +49,7 @@
     "registry": "http://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "browserify -p bundle-collapser/plugin -t uglifyify --debug -e index -s one.color | exorcist one-color-all.map > one-color-all.js && browserify -p bundle-collapser/plugin -t uglifyify --debug -e minimal -s one.color | exorcist one-color.map > one-color.js",
+    "build": "browserify -p bundle-collapser/plugin -p [ minifyify --map one-color-all.map --output one-color-all.map ] --debug -e index -s one.color > one-color-all.js && browserify -p bundle-collapser/plugin -p [ minifyify --map one-color.map --output one-color.map ] --debug -e minimal -s one.color > one-color.js",
     "preversion": "npm run lint && npm run build && npm test && git add one-color{-all,}{js,map}",
     "lint": "jshint .",
     "test": "npm run lint && mocha",
