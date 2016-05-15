@@ -50,7 +50,7 @@
   },
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -p [ minifyify --map one-color-all.map --output one-color-all.map ] --debug -e index -s one.color > one-color-all.js && browserify -p bundle-collapser/plugin -p [ minifyify --map one-color.map --output one-color.map ] --debug -e minimal -s one.color > one-color.js",
-    "preversion": "npm run lint && npm run build && npm test && git add one-color{-all,}.{js,map}",
+    "preversion": "npm run lint && npm run build && npm test && bash -c 'git add one-color{-all,}.{js,map}'",
     "lint": "jshint .",
     "test": "npm run lint && mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
