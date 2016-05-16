@@ -16,7 +16,7 @@ Features:
 * Extensible architecture -- implement your own colorspaces easily
 * Chainable color manipulation
 * Seamless conversion between colorspaces
-* Outputs as hex, `rgb(...)`, `rgba(...)` or `hsv(...)`
+* Outputs as hex, `rgb(...)`, or `rgba(...)`.
 
 Module support:
 * CommonJS / Node
