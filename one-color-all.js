@@ -35,7 +35,7 @@ module.exports=function(e){e.use(require(3)),e.installMethod("rotate",function(e
 },{"3":3}],18:[function(require,module,exports){
 module.exports=function(t){t.use(require(3)),t.installMethod("saturate",function(t){return this.saturation(isNaN(t)?.1:t,!0)})};
 },{"3":3}],19:[function(require,module,exports){
-module.exports=function(e){e.installMethod("toAlpha",function(e){var _=this.rgb(),a=e(e).rgb(),r=1e-10,l=new e.RGB(0,0,0,_._alpha),n=["_red","_green","_blue"];return n.forEach(function(e){l[e]=_[e]<r?_[e]:_[e]>a[e]?(_[e]-a[e])/(1-a[e]):_[e]>a[e]?(a[e]-_[e])/a[e]:0}),_._alpha=l._red>l._green?l._red>l._blue?l._red:l._blue:l._green>l._blue?l._green:l._blue,_._alpha<r?_:(n.forEach(function(e){_[e]=(_[e]-a[e])/_._alpha+a[e]}),_._alpha*=l._alpha,_)})};
+module.exports=function(a){a.installMethod("toAlpha",function(a){var e=this.rgb(),_=a(a).rgb(),l=1e-10,r=new a.RGB(0,0,0,e._alpha),n=["_red","_green","_blue"];return n.forEach(function(a){e[a]<l?r[a]=e[a]:e[a]>_[a]?r[a]=(e[a]-_[a])/(1-_[a]):e[a]>_[a]?r[a]=(_[a]-e[a])/_[a]:r[a]=0}),r._red>r._green?r._red>r._blue?e._alpha=r._red:e._alpha=r._blue:r._green>r._blue?e._alpha=r._green:e._alpha=r._blue,e._alpha<l?e:(n.forEach(function(a){e[a]=(e[a]-_[a])/e._alpha+_[a]}),e._alpha*=r._alpha,e)})};
 },{}]},{},[1])(1)
 });
 
