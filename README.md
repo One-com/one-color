@@ -1,6 +1,6 @@
 one.color
 =========
-[![NPM version](https://badge.fury.io/js/one-color.svg)](http://badge.fury.io/js/one-color)
+[![NPM version](https://badge.fury.io/js/onecolor.svg)](http://badge.fury.io/js/onecolor)
 [![Build Status](https://travis-ci.org/One-com/one-color.svg?branch=master)](https://travis-ci.org/One-com/one-color)
 [![Coverage Status](https://img.shields.io/coveralls/One-com/one-color.svg)](https://coveralls.io/r/One-com/one-color?branch=master)
 [![Dependency Status](https://david-dm.org/One-com/one-color.svg)](https://david-dm.org/One-com/one-color)
