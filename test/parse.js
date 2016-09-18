@@ -48,4 +48,36 @@ describe('parsing', function () {
             expect(color('cmyk(100,100%,100%)'), 'to be false');
         });
     });
+
+    describe('with #rrggbbaa', function () {
+        var instance = color('#00ff0080');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#00ff00');
+        });
+
+        it('should have its alpha channel set correctly', function () {
+            expect(instance.alpha().toFixed(2), 'to equal', '0.50');
+        });
+    });
+
+    describe('with #rgba', function () {
+        var instance = color('#0f08');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#00ff00');
+        });
+
+        it('should have its alpha channel set correctly', function () {
+            expect(instance.alpha().toFixed(2), 'to equal', '0.53');
+        });
+    });
 });
