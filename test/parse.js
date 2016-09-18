@@ -80,4 +80,96 @@ describe('parsing', function () {
             expect(instance.alpha().toFixed(2), 'to equal', '0.53');
         });
     });
+
+    describe('with rgb(r, g, b)', function () {
+        var instance = color('rgb(10, 20, 30)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#0a141e');
+        });
+    });
+
+    describe('with rgb(r,g,b)', function () {
+        var instance = color('rgb(10,20,30)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#0a141e');
+        });
+    });
+
+    describe('with rgb(r g b)', function () {
+        var instance = color('rgb(10 20 30)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#0a141e');
+        });
+    });
+
+    describe('with rgba(r g b / a)', function () {
+        var instance = color('rgba(10 20 30 / 50%)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#0a141e');
+        });
+
+        it('should have its alpha channel set correctly', function () {
+            expect(instance.alpha().toFixed(2), 'to equal', '0.50');
+        });
+    });
+
+    describe('with rgba(r g b/a)', function () {
+        var instance = color('rgba(10 20 30/50%)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#0a141e');
+        });
+
+        it('should have its alpha channel set correctly', function () {
+            expect(instance.alpha().toFixed(2), 'to equal', '0.50');
+        });
+    });
+
+    describe('with hsl(h s l) and the hue given as a percentage', function () {
+        var instance = color('hsl(10% 20% 30%)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#5c503d');
+        });
+    });
+
+    describe('with hsl(h s l) and the hue given as an angle', function () {
+        var instance = color('hsl(10deg 20% 30%)');
+
+        it('should return a color instance', function () {
+            expect(instance, 'to be a color instance');
+        });
+
+        it('should be green', function () {
+            expect(instance.hex(), 'to equal', '#5c423d');
+        });
+    });
 });
