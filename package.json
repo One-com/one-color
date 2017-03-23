@@ -46,9 +46,6 @@
     "minimal.js",
     "lib"
   ],
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org/"
-  },
   "scripts": {
     "build": "browserify -p bundle-collapser/plugin -p [ minifyify --map one-color-all.map --output one-color-all.map ] --debug -e index -s one.color > one-color-all.js && browserify -p bundle-collapser/plugin -p [ minifyify --map one-color.map --output one-color.map ] --debug -e minimal -s one.color > one-color.js",
     "preversion": "npm run lint && npm run build && npm test && bash -c 'git add one-color{-all,}.{js,map}'",
