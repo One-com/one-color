@@ -27,6 +27,10 @@ Package managers:
 * npm: `npm install onecolor`
 * bower: `bower install color`
 
+Small sizes:
+* one-color.js ![](http://img.badgesize.io/One-com/one-color/master/one-color.js.svg?label=size) ![](http://img.badgesize.io/One-com/one-color/master/one-color.js.svg?label=gzip&compression=gzip) (Basic RGB, HSV, HSL)
+* one-color-all.js ![](http://img.badgesize.io/One-com/one-color/master/one-color-all.js.svg?label=size) ![](http://img.badgesize.io/One-com/one-color/master/one-color-all.js.svg?label=gzip&compression=gzip) (Full RGB, HSV, HSL, CMYK, XYZ, LAB, named colors, [helper functions](https://github.com/One-com/one-color/tree/master/lib/plugins))
+
 
 Usage
 -----
