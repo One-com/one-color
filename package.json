@@ -37,10 +37,9 @@
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
     "prettier": "^2.0.5",
-    "rimraf": "2.6.2",
-    "rollup": "0.41.6",
-    "rollup-plugin-commonjs": "8.0.2",
-    "uglify-js": "2.8.21",
+    "rollup": "^2.21.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^6.1.0",
     "unexpected": "10.11.1"
   },
   "engines": {
@@ -56,12 +55,8 @@
     "lib"
   ],
   "scripts": {
-    "preone-color-all": "rollup -c rollup.config.js index.js",
-    "one-color-all": "uglifyjs --compress --mangle --in-source-map OUT.js.map --source-map one-color-all.map OUT.js > one-color-all.js",
-    "postone-color-all": "rimraf OUT.*",
-    "preone-color": "rollup -c rollup.config.js minimal.js ",
-    "one-color": "uglifyjs --compress --mangle --in-source-map OUT.js.map --source-map one-color.map OUT.js > one-color.js",
-    "postone-color": "rimraf OUT.*",
+    "one-color-all": "rollup -c rollup.config.js index.js -o one-color-all.js",
+    "one-color": "rollup -c rollup.config.js minimal.js -o one-color.js",
     "build": "npm run one-color && npm run one-color-all",
     "preversion": "npm run lint && npm run build && TEST_BUNDLES=true npm test && bash -c 'git add one-color{-all,}.{js,map}'",
     "lint": "eslint . && prettier --check '**/*.{js,md}'",
