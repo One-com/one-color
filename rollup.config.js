@@ -6,7 +6,7 @@ module.exports = {
   sourceMap: true,
 
   plugins: [
-    require('rollup-plugin-commonjs')(),
+    require('@rollup/plugin-commonjs')(),
     require('rollup-plugin-terser').terser(),
   ],
 };

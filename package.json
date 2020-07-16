@@ -24,6 +24,7 @@
     }
   ],
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^14.0.0",
     "coveralls": "2.11.9",
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.11.0",
@@ -38,7 +39,6 @@
     "mocha-lcov-reporter": "1.2.0",
     "prettier": "^2.0.5",
     "rollup": "^2.21.0",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^6.1.0",
     "unexpected": "10.11.1"
   },
