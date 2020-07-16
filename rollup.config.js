@@ -8,7 +8,5 @@ module.exports = {
 
   sourceMap: true,
 
-  plugins: [
-    commonjs()
-  ]
+  plugins: [commonjs()],
 };
