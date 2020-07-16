@@ -1,12 +1,14 @@
-var commonjs = require('rollup-plugin-commonjs');
-
 module.exports = {
   // entry: 'index.js',
-  format: 'umd',
-  moduleName: 'one.color',
-  dest: 'OUT.js',
 
-  sourceMap: true,
+  plugins: [
+    require('@rollup/plugin-commonjs')(),
+    require('rollup-plugin-terser').terser(),
+  ],
 
-  plugins: [commonjs()],
+  output: {
+    format: 'umd',
+    name: 'one.color',
+    sourcemap: true,
+  },
 };
