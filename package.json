@@ -29,6 +29,7 @@
     "jshint": "^2.9.1",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
+    "prettier": "^2.0.5",
     "rimraf": "2.6.2",
     "rollup": "0.41.6",
     "rollup-plugin-commonjs": "8.0.2",
@@ -56,7 +57,7 @@
     "postone-color": "rimraf OUT.*",
     "build": "npm run one-color && npm run one-color-all",
     "preversion": "npm run lint && npm run build && TEST_BUNDLES=true npm test && bash -c 'git add one-color{-all,}.{js,map}'",
-    "lint": "jshint .",
+    "lint": "jshint . && prettier --check '**/*.{js,md}'",
     "test": "npm run lint && mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
     "ci:test": "TEST_BUNDLES=true npm run coverage"

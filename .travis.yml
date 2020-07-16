@@ -3,13 +3,19 @@ services:
 language: node_js
 cache:
   directories:
-  - node_modules
+    - node_modules
 node_js:
-  - "0.12"
-  - "1"
-  - "2"
-  - "3"
-  - "4"
+  - '0.12'
+  - '1'
+  - '2'
+  - '3'
+  - '4'
 
-script: "(nvm i 12 && npm run build) && npm run ci:test"
-after_success: "<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js"
+matrix:
+  include:
+    - name: Lint
+      node_js: 12
+      script: npm run lint
+
+script: '(nvm i 12 && npm run build) && npm run ci:test'
+after_success: '<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js'
