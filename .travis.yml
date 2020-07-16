@@ -11,5 +11,5 @@ node_js:
   - "3"
   - "4"
 
-script: "npm run ci"
+script: "(nvm i 12 && npm run build) && npm run ci:test"
 after_success: "<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js"

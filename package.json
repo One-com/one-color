@@ -59,7 +59,7 @@
     "lint": "jshint .",
     "test": "npm run lint && mocha",
     "coverage": "istanbul cover _mocha -- --reporter dot",
-    "ci": "npm run lint && npm run build && TEST_BUNDLES=true npm run coverage"
+    "ci:test": "TEST_BUNDLES=true npm run coverage"
   },
   "jspm": {
     "dependencies": {},
