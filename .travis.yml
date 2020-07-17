@@ -22,6 +22,9 @@ matrix:
     - name: Lint
       node_js: 14
       script: npm run lint
+    - name: Documentation
+      node_js: 14
+      script: npm run test:documentation
 
 script: '(nvm i 14 && npm run build) && npm run ci:test'
 after_success: '<coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js'
