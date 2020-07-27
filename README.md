@@ -59,7 +59,7 @@ console.warn(color('rgba(100%, 0%, 0%, .5)').alpha(0.4).cssa());
 ```
 
 ```output
-'rgba(255,0,0,0.4)'
+rgba(255,0,0,0.4)
 ```
 
 All of the above return color instances in the relevant color space
@@ -309,7 +309,7 @@ console.log(myColor.red() + ' ' + myColor.green() + ' ' + myColor.blue());
 ```
 
 ```output
-'0 0.06265060240963878 0.5999999999999999'
+0 0.06265060240963878 0.5999999999999999
 ```
 
 # Building
