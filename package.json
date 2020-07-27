@@ -34,7 +34,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "evaldown": "^1.1.2",
+    "evaldown": "^1.2.2",
     "istanbul": "0.4.2",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
