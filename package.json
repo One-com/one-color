@@ -2,7 +2,7 @@
   "name": "onecolor",
   "description": "Javascript color object with implicit color space conversions. Supports RGB, HSV, HSL and CMYK with alpha channel.",
   "repository": "git@github.com:One-com/one-color.git",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "license": "BSD-2-Clause",
   "keywords": [
     "color",
@@ -20,18 +20,28 @@
     },
     {
       "name": "Andreas Lind",
-      "email": "andreas@one.com"
+      "email": "andreaslindpetersen@gmail.com"
     }
   ],
   "devDependencies": {
-    "browserify": "13.0.0",
-    "bundle-collapser": "1.2.1",
+    "@rollup/plugin-commonjs": "^14.0.0",
     "coveralls": "2.11.9",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-mocha": "^7.0.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "evaldown": "^1.2.2",
     "istanbul": "0.4.2",
-    "jshint": "^2.9.1",
-    "minifyify": "7.3.2",
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
+    "onecolor": "file:./",
+    "prettier": "^2.0.5",
+    "rollup": "^2.21.0",
+    "rollup-plugin-terser": "^6.1.0",
     "unexpected": "10.11.1"
   },
   "engines": {
@@ -46,16 +56,16 @@
     "minimal.js",
     "lib"
   ],
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org/"
-  },
   "scripts": {
-    "build": "browserify -p bundle-collapser/plugin -p [ minifyify --map one-color-all.map --output one-color-all.map ] --debug -e index -s one.color > one-color-all.js && browserify -p bundle-collapser/plugin -p [ minifyify --map one-color.map --output one-color.map ] --debug -e minimal -s one.color > one-color.js",
-    "preversion": "npm run lint && npm run build && npm test && bash -c 'git add one-color{-all,}.{js,map}'",
-    "lint": "jshint .",
+    "one-color-all": "rollup -c rollup.config.js index.js -o one-color-all.js",
+    "one-color": "rollup -c rollup.config.js minimal.js -o one-color.js",
+    "build": "npm run one-color && npm run one-color-all",
+    "preversion": "npm run lint && npm run build && TEST_BUNDLES=true npm test && bash -c 'git add one-color{-all,}.{js,map}'",
+    "lint": "eslint . && prettier --check '**/*.{js,md}'",
     "test": "npm run lint && mocha",
+    "test:documentation": "evaldown --validate --capture=console ./README.md",
     "coverage": "istanbul cover _mocha -- --reporter dot",
-    "travis": "npm run lint && npm run build && npm run coverage"
+    "ci:test": "TEST_BUNDLES=true npm run coverage"
   },
   "jspm": {
     "dependencies": {},

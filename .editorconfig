@@ -16,7 +16,7 @@ insert_final_newline = true
 
 ; Indentation
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 [Makefile]
 indent_style = tab
