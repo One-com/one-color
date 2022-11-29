@@ -49,9 +49,9 @@
   },
   "files": [
     "one-color.js",
-    "one-color.map",
+    "one-color.js.map",
     "one-color-all.js",
-    "one-color-all.map",
+    "one-color-all.js.map",
     "index.js",
     "minimal.js",
     "lib"
@@ -60,7 +60,7 @@
     "one-color-all": "rollup -c rollup.config.js index.js -o one-color-all.js",
     "one-color": "rollup -c rollup.config.js minimal.js -o one-color.js",
     "build": "npm run one-color && npm run one-color-all",
-    "preversion": "npm run lint && npm run build && TEST_BUNDLES=true npm test && bash -c 'git add one-color{-all,}.{js,map}'",
+    "preversion": "npm run lint && npm run build && TEST_BUNDLES=true npm test && bash -c 'git add one-color{-all,}.js{,.map}'",
     "lint": "eslint . && prettier --check '**/*.{js,md}'",
     "test": "npm run lint && mocha",
     "test:documentation": "evaldown --validate --capture=console ./README.md",
