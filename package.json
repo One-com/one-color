@@ -39,7 +39,7 @@
     "mocha": "2.4.5",
     "mocha-lcov-reporter": "1.2.0",
     "onecolor": "file:./",
-    "prettier": "^2.0.5",
+    "prettier": "~2.8.0",
     "rollup": "^2.21.0",
     "rollup-plugin-terser": "^6.1.0",
     "unexpected": "10.11.1"
