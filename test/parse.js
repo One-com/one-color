@@ -1,12 +1,12 @@
 var color = require('../');
 var expect = require('unexpected').clone();
 
-expect.addAssertion('<object> to be a color instance', function (
-  expect,
-  subject
-) {
-  expect(subject, 'to satisfy', { isColor: true });
-});
+expect.addAssertion(
+  '<object> to be a color instance',
+  function (expect, subject) {
+    expect(subject, 'to satisfy', { isColor: true });
+  }
+);
 
 describe('parsing', function () {
   describe('when parsing cmyk example from https://github.com/One-com/one-color/issues/25', function () {

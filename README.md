@@ -301,9 +301,7 @@ specific colorspace, do an explicit conversion first to cut down on
 the number of implicit conversions:
 
 ```javascript
-var myColor = color('#0620ff')
-  .lightness(+0.3)
-  .rgb();
+var myColor = color('#0620ff').lightness(+0.3).rgb();
 
 console.log(myColor.red() + ' ' + myColor.green() + ' ' + myColor.blue());
 ```

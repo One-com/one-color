@@ -81,9 +81,8 @@ function testLib(libConfig) {
               function () {
                 var expected = {};
 
-                expected[otherSpace.name.toLowerCase()] = expect.it(
-                  'to be a function'
-                );
+                expected[otherSpace.name.toLowerCase()] =
+                  expect.it('to be a function');
 
                 expect(clr, 'to satisfy', expected);
               }
