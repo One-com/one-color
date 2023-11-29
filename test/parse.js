@@ -154,6 +154,22 @@ describe('parsing', function () {
     });
   });
 
+  describe('with rgba(r, g, b, a)', function () {
+    var instance = color('rgba(10, 20, 30, 0.5)');
+
+    it('should return a color instance', function () {
+      expect(instance, 'to be a color instance');
+    });
+
+    it('should be green', function () {
+      expect(instance.hex(), 'to equal', '#0a141e');
+    });
+
+    it('should have its alpha channel set correctly', function () {
+      expect(instance.alpha().toFixed(2), 'to equal', '0.50');
+    });
+  });
+
   describe('with hsl(h s l) and the hue given as a percentage', function () {
     var instance = color('hsl(10% 20% 30%)');
 
